@@ -170,6 +170,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String PLACE_GRDC = "place_grdc";
 	private static final String PLACE_KNGC = "place_kngc";
 	private static final String PLACE_MSPR = "place_mspr";
+	private static final String PLACE_RAIL = "place_rail";
 
 	@Override
 	public int getStopId(GStop gStop) {
@@ -189,6 +190,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			return 14000000;
 		} else if (PLACE_MSPR.equals(stopId)) {
 			return 15000000;
+		} else if (PLACE_RAIL.equals(stopId)) {
+			return 16000000;
 		}
 		try {
 			Matcher matcher = DIGITS.matcher(stopId);
