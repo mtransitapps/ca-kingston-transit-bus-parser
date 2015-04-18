@@ -1,6 +1,7 @@
 package org.mtransit.parser.ca_kingston_transit_bus;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -147,10 +148,22 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return AGENCY_COLOR;
 	}
 
+	private static final String CATARAQUI = "Cataraqui";
+	private static final String VIA = " via ";
+
 	@Override
 	public void setTripHeadsign(MRoute route, MTrip mTrip, GTrip gTrip) {
-		String stationName = cleanTripHeadsign(gTrip.trip_headsign);
 		int directionId = gTrip.direction_id;
+		String stationName = cleanTripHeadsign(gTrip.trip_headsign);
+		int indexOfVIA = stationName.toLowerCase(Locale.ENGLISH).indexOf(VIA);
+		if (indexOfVIA >= 0) {
+			stationName = stationName.substring(0, indexOfVIA);
+		}
+		if (route.id == 15l) {
+			if (directionId == 1) {
+				stationName = CATARAQUI;
+			}
+		}
 		mTrip.setHeadsignString(stationName, directionId);
 	}
 
@@ -159,9 +172,76 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return MSpec.cleanLabel(tripHeadsign);
 	}
 
+	private static final Pattern FIRST = Pattern.compile("(first )", Pattern.CASE_INSENSITIVE);
+	private static final String FIRST_REPLACEMENT = "1st ";
+	private static final Pattern SECOND = Pattern.compile("(second )", Pattern.CASE_INSENSITIVE);
+	private static final String SECOND_REPLACEMENT = "2nd ";
+	private static final Pattern THIRD = Pattern.compile("(third )", Pattern.CASE_INSENSITIVE);
+	private static final String THIRD_REPLACEMENT = "3rd ";
+	private static final Pattern FOURTH = Pattern.compile("(fourth )", Pattern.CASE_INSENSITIVE);
+	private static final String FOURTH_REPLACEMENT = "4th";
+	private static final Pattern FIFTH = Pattern.compile("(fifth )", Pattern.CASE_INSENSITIVE);
+	private static final String FIFTH_REPLACEMENT = "5th ";
+	private static final Pattern SIXTH = Pattern.compile("(sixth )", Pattern.CASE_INSENSITIVE);
+	private static final String SIXTH_REPLACEMENT = "6th ";
+	private static final Pattern SEVENTH = Pattern.compile("(seventh )", Pattern.CASE_INSENSITIVE);
+	private static final String SEVENTH_REPLACEMENT = "7th ";
+	private static final Pattern EIGHTH = Pattern.compile("(eighth )", Pattern.CASE_INSENSITIVE);
+	private static final String EIGHTH_REPLACEMENT = "8th ";
+	private static final Pattern NINTH = Pattern.compile("(ninth )", Pattern.CASE_INSENSITIVE);
+	private static final String NINTH_REPLACEMENT = "9th ";
+
+	private static final Pattern AT = Pattern.compile("( at )", Pattern.CASE_INSENSITIVE);
+	private static final String AT_REPLACEMENT = " / ";
+
+	private static final Pattern AND = Pattern.compile("( and )", Pattern.CASE_INSENSITIVE);
+	private static final String AND_REPLACEMENT = " & ";
+
+	private static final Pattern STREET = Pattern.compile("( street)", Pattern.CASE_INSENSITIVE);
+	private static final String STREET_REPLACEMENT = " St";
+
+	private static final Pattern AVENUE = Pattern.compile("( avenue)", Pattern.CASE_INSENSITIVE);
+	private static final String AVENUE_REPLACEMENT = " Ave";
+
+	private static final Pattern ROAD = Pattern.compile("( road)", Pattern.CASE_INSENSITIVE);
+	private static final String ROAD_REPLACEMENT = " Rd";
+
+	private static final Pattern HIGHWAY = Pattern.compile("(highway)", Pattern.CASE_INSENSITIVE);
+	private static final String HIGHWAY_REPLACEMENT = "Hwy";
+
+	private static final Pattern BOULEVARD = Pattern.compile("( boulevard)", Pattern.CASE_INSENSITIVE);
+	private static final String BOULEVARD_REPLACEMENT = " Blvd";
+
+	private static final Pattern DRIVE = Pattern.compile("( drive)", Pattern.CASE_INSENSITIVE);
+	private static final String DRIVE_REPLACEMENT = " Dr";
+
+	private static final Pattern PLACE = Pattern.compile("( place)", Pattern.CASE_INSENSITIVE);
+	private static final String PLACE_REPLACEMENT = " Pl";
+
+	private static final Pattern LANE = Pattern.compile("( lane)", Pattern.CASE_INSENSITIVE);
+	private static final String LANE_REPLACEMENT = " Ln";
 	@Override
 	public String cleanStopName(String gStopName) {
-		return super.cleanStopName(gStopName);
+		gStopName = LANE.matcher(gStopName).replaceAll(LANE_REPLACEMENT);
+		gStopName = PLACE.matcher(gStopName).replaceAll(PLACE_REPLACEMENT);
+		gStopName = DRIVE.matcher(gStopName).replaceAll(DRIVE_REPLACEMENT);
+		gStopName = BOULEVARD.matcher(gStopName).replaceAll(BOULEVARD_REPLACEMENT);
+		gStopName = HIGHWAY.matcher(gStopName).replaceAll(HIGHWAY_REPLACEMENT);
+		gStopName = STREET.matcher(gStopName).replaceAll(STREET_REPLACEMENT);
+		gStopName = AVENUE.matcher(gStopName).replaceAll(AVENUE_REPLACEMENT);
+		gStopName = ROAD.matcher(gStopName).replaceAll(ROAD_REPLACEMENT);
+		gStopName = AND.matcher(gStopName).replaceAll(AND_REPLACEMENT);
+		gStopName = AT.matcher(gStopName).replaceAll(AT_REPLACEMENT);
+		gStopName = FIRST.matcher(gStopName).replaceAll(FIRST_REPLACEMENT);
+		gStopName = SECOND.matcher(gStopName).replaceAll(SECOND_REPLACEMENT);
+		gStopName = THIRD.matcher(gStopName).replaceAll(THIRD_REPLACEMENT);
+		gStopName = FOURTH.matcher(gStopName).replaceAll(FOURTH_REPLACEMENT);
+		gStopName = FIFTH.matcher(gStopName).replaceAll(FIFTH_REPLACEMENT);
+		gStopName = SIXTH.matcher(gStopName).replaceAll(SIXTH_REPLACEMENT);
+		gStopName = SEVENTH.matcher(gStopName).replaceAll(SEVENTH_REPLACEMENT);
+		gStopName = EIGHTH.matcher(gStopName).replaceAll(EIGHTH_REPLACEMENT);
+		gStopName = NINTH.matcher(gStopName).replaceAll(NINTH_REPLACEMENT);
+		return MSpec.cleanLabel(gStopName);
 	}
 
 	private static final String PLACE_CATC = "place_catc";
