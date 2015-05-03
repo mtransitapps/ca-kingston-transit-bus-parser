@@ -104,6 +104,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String ROUTE_19 = "Queen's / Kingston General Hospital - Montreal St Park & Ride";
 	private static final String ROUTE_501 = "Express (Kingston Centre - Downtown - Kingston Gen. Hospital - St Lawrence College - Cataraqui Centre)";
 	private static final String ROUTE_502 = "Express (St Lawrence College - Kingston Gen. Hospital - Downtown - Kingston Centre - Cataraqui Centre)";
+	private static final String ROUTE_601 = "Innovation Dr Park & Ride – Queen's / KGH";
+	private static final String ROUTE_602 = "Queen's / KGH – Innovation Dr Park & Ride";
+	private static final String ROUTE_701 = "King's Crossing Centre – Cataraqui Centre";
+	private static final String ROUTE_702 = "Cataraqui Centre - King's Crossing Centre";
 
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
@@ -133,6 +137,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		case 19: return ROUTE_19;
 		case 501: return ROUTE_501;
 		case 502: return ROUTE_502;
+		case 601: return ROUTE_601;
+		case 602: return ROUTE_602;
+		case 701: return ROUTE_701;
+		case 702: return ROUTE_702;
 		// @formatter:on
 		default:
 			System.out.println("getRouteLongName() > Unexpected route ID '" + digits + "' (" + gRoute + ")");
