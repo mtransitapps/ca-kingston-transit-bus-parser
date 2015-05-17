@@ -177,6 +177,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String cleanTripHeadsign(String tripHeadsign) {
+		tripHeadsign = MSpec.cleanStreetTypes(tripHeadsign);
 		return MSpec.cleanLabel(tripHeadsign);
 	}
 
