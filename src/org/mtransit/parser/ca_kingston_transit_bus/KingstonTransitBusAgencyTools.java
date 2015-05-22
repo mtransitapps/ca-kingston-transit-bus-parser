@@ -10,6 +10,7 @@ import org.mtransit.parser.Utils;
 import org.mtransit.parser.gtfs.data.GCalendar;
 import org.mtransit.parser.gtfs.data.GCalendarDate;
 import org.mtransit.parser.gtfs.data.GRoute;
+import org.mtransit.parser.gtfs.data.GSpec;
 import org.mtransit.parser.gtfs.data.GStop;
 import org.mtransit.parser.gtfs.data.GTrip;
 import org.mtransit.parser.mt.data.MAgency;
@@ -160,14 +161,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String VIA = " via ";
 
 	@Override
-	public void setTripHeadsign(MRoute route, MTrip mTrip, GTrip gTrip) {
+	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
 		int directionId = gTrip.direction_id;
 		String stationName = cleanTripHeadsign(gTrip.trip_headsign);
 		int indexOfVIA = stationName.toLowerCase(Locale.ENGLISH).indexOf(VIA);
 		if (indexOfVIA >= 0) {
 			stationName = stationName.substring(0, indexOfVIA);
 		}
-		if (route.id == 15l) {
+		if (mRoute.id == 15l) {
 			if (directionId == 1) {
 				stationName = CATARAQUI;
 			}
@@ -187,39 +188,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern AND = Pattern.compile("( and )", Pattern.CASE_INSENSITIVE);
 	private static final String AND_REPLACEMENT = " & ";
 
-	private static final Pattern STREET = Pattern.compile("( street)", Pattern.CASE_INSENSITIVE);
-	private static final String STREET_REPLACEMENT = " St";
 
-	private static final Pattern AVENUE = Pattern.compile("( avenue)", Pattern.CASE_INSENSITIVE);
-	private static final String AVENUE_REPLACEMENT = " Ave";
-
-	private static final Pattern ROAD = Pattern.compile("( road)", Pattern.CASE_INSENSITIVE);
-	private static final String ROAD_REPLACEMENT = " Rd";
-
-	private static final Pattern HIGHWAY = Pattern.compile("(highway)", Pattern.CASE_INSENSITIVE);
-	private static final String HIGHWAY_REPLACEMENT = "Hwy";
-
-	private static final Pattern BOULEVARD = Pattern.compile("( boulevard)", Pattern.CASE_INSENSITIVE);
-	private static final String BOULEVARD_REPLACEMENT = " Blvd";
-
-	private static final Pattern DRIVE = Pattern.compile("( drive)", Pattern.CASE_INSENSITIVE);
-	private static final String DRIVE_REPLACEMENT = " Dr";
-
-	private static final Pattern PLACE = Pattern.compile("( place)", Pattern.CASE_INSENSITIVE);
-	private static final String PLACE_REPLACEMENT = " Pl";
-
-	private static final Pattern LANE = Pattern.compile("( lane)", Pattern.CASE_INSENSITIVE);
-	private static final String LANE_REPLACEMENT = " Ln";
 	@Override
 	public String cleanStopName(String gStopName) {
-		gStopName = LANE.matcher(gStopName).replaceAll(LANE_REPLACEMENT);
-		gStopName = PLACE.matcher(gStopName).replaceAll(PLACE_REPLACEMENT);
-		gStopName = DRIVE.matcher(gStopName).replaceAll(DRIVE_REPLACEMENT);
-		gStopName = BOULEVARD.matcher(gStopName).replaceAll(BOULEVARD_REPLACEMENT);
-		gStopName = HIGHWAY.matcher(gStopName).replaceAll(HIGHWAY_REPLACEMENT);
-		gStopName = STREET.matcher(gStopName).replaceAll(STREET_REPLACEMENT);
-		gStopName = AVENUE.matcher(gStopName).replaceAll(AVENUE_REPLACEMENT);
-		gStopName = ROAD.matcher(gStopName).replaceAll(ROAD_REPLACEMENT);
+		gStopName = MSpec.cleanStreetTypes(gStopName);
 		gStopName = AND.matcher(gStopName).replaceAll(AND_REPLACEMENT);
 		gStopName = AT.matcher(gStopName).replaceAll(AT_REPLACEMENT);
 		gStopName = MSpec.cleanNumbers(gStopName);
