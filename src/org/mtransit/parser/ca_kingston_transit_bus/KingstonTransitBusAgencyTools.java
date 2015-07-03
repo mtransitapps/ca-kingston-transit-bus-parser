@@ -19,6 +19,7 @@ import org.mtransit.parser.mt.data.MSpec;
 import org.mtransit.parser.mt.data.MTrip;
 
 // https://www.cityofkingston.ca/residents/transit/about
+// https://www.cityofkingston.ca/cok/data/transit_feeds/
 // https://www.cityofkingston.ca/cok/data/transit_feeds/google_transit.zip
 public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
