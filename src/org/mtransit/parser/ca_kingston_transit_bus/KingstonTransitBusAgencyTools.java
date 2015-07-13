@@ -37,7 +37,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void start(String[] args) {
-		System.out.printf("\nGenerating Kingston Transit bus data...\n");
+		System.out.printf("\nGenerating Kingston Transit bus data...");
 		long start = System.currentTimeMillis();
 		this.serviceIds = extractUsefulServiceIds(args, this);
 		super.start(args);
