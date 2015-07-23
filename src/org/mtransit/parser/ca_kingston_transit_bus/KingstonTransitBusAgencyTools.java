@@ -79,10 +79,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public long getRouteId(GRoute gRoute) {
-		if (ROUTE_12A_RSN.equals(gRoute.route_short_name)) {
+		if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
 			return 1012;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.route_id);
+		Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
 		matcher.find();
 		return Integer.parseInt(matcher.group());
 	}
@@ -113,10 +113,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
-		if (ROUTE_12A_RSN.equals(gRoute.route_short_name)) {
+		if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
 			return ROUTE_12A;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.route_id);
+		Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
 		matcher.find();
 		int digits = Integer.parseInt(matcher.group());
 		switch (digits) {
@@ -163,8 +163,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
-		int directionId = gTrip.direction_id;
-		String stationName = cleanTripHeadsign(gTrip.trip_headsign);
+		int directionId = gTrip.getDirectionId();
+		String stationName = cleanTripHeadsign(gTrip.getTripHeadsign());
 		int indexOfVIA = stationName.toLowerCase(Locale.ENGLISH).indexOf(VIA);
 		if (indexOfVIA >= 0) {
 			stationName = stationName.substring(0, indexOfVIA);
@@ -209,7 +209,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public int getStopId(GStop gStop) {
-		String stopId = gStop.stop_id;
+		String stopId = gStop.getStopId();
 		if (stopId != null && stopId.length() > 0 && Utils.isDigitsOnly(stopId)) {
 			return Integer.valueOf(stopId); // using stop code as stop ID
 		}
