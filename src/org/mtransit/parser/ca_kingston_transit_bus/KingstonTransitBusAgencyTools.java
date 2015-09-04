@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.Utils;
 import org.mtransit.parser.gtfs.data.GCalendar;
@@ -104,6 +105,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String ROUTE_17 = "Queen's Shuttle / Main Campus - Queen's Shuttle / West Campus";
 	private static final String ROUTE_18 = "Train Station Circuit";
 	private static final String ROUTE_19 = "Queen's / Kingston General Hospital - Montreal St Park & Ride";
+	private static final String ROUTE_20 = "Queen's Shuttle – Isabel / Tett Centres";
 	private static final String ROUTE_501 = "Express (Kingston Centre - Downtown - Kingston Gen. Hospital - St Lawrence College - Cataraqui Centre)";
 	private static final String ROUTE_502 = "Express (St Lawrence College - Kingston Gen. Hospital - Downtown - Kingston Centre - Cataraqui Centre)";
 	private static final String ROUTE_601 = "Innovation Dr Park & Ride – Queen's / KGH";
@@ -113,42 +115,46 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
-		if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
-			return ROUTE_12A;
+		if (StringUtils.isEmpty(gRoute.getRouteLongName())) {
+			if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
+				return ROUTE_12A;
+			}
+			Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
+			matcher.find();
+			int digits = Integer.parseInt(matcher.group());
+			switch (digits) {
+			// @formatter:off
+			case 1: return ROUTE_1;
+			case 2: return ROUTE_2;
+			case 3: return ROUTE_3;
+			case 4: return ROUTE_4;
+			case 6: return ROUTE_6;
+			case 7: return ROUTE_7;
+			case 9: return ROUTE_9;
+			case 10: return ROUTE_10;
+			case 11: return ROUTE_11;
+			case 12: return ROUTE_12;
+			case 14: return ROUTE_14;
+			case 15: return ROUTE_15;
+			case 16: return ROUTE_16;
+			case 17: return ROUTE_17;
+			case 18: return ROUTE_18;
+			case 19: return ROUTE_19;
+			case 20: return ROUTE_20;
+			case 501: return ROUTE_501;
+			case 502: return ROUTE_502;
+			case 601: return ROUTE_601;
+			case 602: return ROUTE_602;
+			case 701: return ROUTE_701;
+			case 702: return ROUTE_702;
+			// @formatter:on
+			default:
+				System.out.printf("\nUnexpected route long name '%s'!", gRoute);
+				System.exit(-1);
+				return null;
+			}
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
-		matcher.find();
-		int digits = Integer.parseInt(matcher.group());
-		switch (digits) {
-		// @formatter:off
-		case 1: return ROUTE_1;
-		case 2: return ROUTE_2;
-		case 3: return ROUTE_3;
-		case 4: return ROUTE_4;
-		case 6: return ROUTE_6;
-		case 7: return ROUTE_7;
-		case 9: return ROUTE_9;
-		case 10: return ROUTE_10;
-		case 11: return ROUTE_11;
-		case 12: return ROUTE_12;
-		case 14: return ROUTE_14;
-		case 15: return ROUTE_15;
-		case 16: return ROUTE_16;
-		case 17: return ROUTE_17;
-		case 18: return ROUTE_18;
-		case 19: return ROUTE_19;
-		case 501: return ROUTE_501;
-		case 502: return ROUTE_502;
-		case 601: return ROUTE_601;
-		case 602: return ROUTE_602;
-		case 701: return ROUTE_701;
-		case 702: return ROUTE_702;
-		// @formatter:on
-		default:
-			System.out.println("getRouteLongName() > Unexpected route ID '" + digits + "' (" + gRoute + ")");
-			System.exit(-1);
-			return null;
-		}
+		return super.getRouteLongName(gRoute);
 	}
 
 	private static final String AGENCY_COLOR = "009BC9";
