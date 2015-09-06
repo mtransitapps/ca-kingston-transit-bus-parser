@@ -174,28 +174,33 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return AGENCY_COLOR;
 	}
 
+	private static final String KINGSTON_GOSPEL_TEMPLE = "Kingston Gospel Temple";
+	private static final String CATARAQUI_CTR_TRANSFER_PT = "Cataraqui Ctr Transfer Pt";
+	private static final String MAIN_CAMPUS = "Main Campus";
+	private static final String WEST_CAMPUS = "West Campus";
+
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
 		map2.put(14l, new RouteTripSpec(14l, //
-				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Kingston Gospel Temple", //
-				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Cataraqui Ctr Transfer Pt") //
+				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, KINGSTON_GOSPEL_TEMPLE, //
+				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, CATARAQUI_CTR_TRANSFER_PT) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
 						Arrays.asList(new String[] { "S02077", "00850", "S00399" })) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
 						Arrays.asList(new String[] { "S00399", "00410", "S02078" })) //
 				.compileBothTripSort());
 		map2.put(17l, new RouteTripSpec(17l, //
-				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Main Campus", //
-				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "West Campus") //
+				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, MAIN_CAMPUS, //
+				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, WEST_CAMPUS) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
 						Arrays.asList(new String[] { "00472", "00439", "00429" })) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
 						Arrays.asList(new String[] { "00429", "00107", "00472" })) //
 				.compileBothTripSort());
 		map2.put(20l, new RouteTripSpec(20l, //
-				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Main Campus", //
-				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "West Campus") //
+				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, MAIN_CAMPUS, //
+				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, WEST_CAMPUS) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
 						Arrays.asList(new String[] { "S02009", "S00417", "S02042" })) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
