@@ -263,14 +263,33 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return CleanUtils.cleanLabel(tripHeadsign);
 	}
 
+	private static final Pattern SIDE = Pattern.compile("((^|\\W){1}(side)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final String SIDE_REPLACEMENT = "$2$4";
 
+	private static final Pattern EAST_ = Pattern.compile("((^|\\W){1}(east)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final String EAST_REPLACEMENT = "$2E$4";
+
+	private static final Pattern WEST_ = Pattern.compile("((^|\\W){1}(west)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final String WEST_REPLACEMENT = "$2W$4";
+
+	private static final Pattern NORTH_ = Pattern.compile("((^|\\W){1}(north)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final String NORTH_REPLACEMENT = "$2N$4";
+
+	private static final Pattern SOUTH_ = Pattern.compile("((^|\\W){1}(south)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final String SOUTH_REPLACEMENT = "$2S$4";
 
 	@Override
 	public String cleanStopName(String gStopName) {
+		gStopName = SIDE.matcher(gStopName).replaceAll(SIDE_REPLACEMENT);
+		gStopName = EAST_.matcher(gStopName).replaceAll(EAST_REPLACEMENT);
+		gStopName = WEST_.matcher(gStopName).replaceAll(WEST_REPLACEMENT);
+		gStopName = NORTH_.matcher(gStopName).replaceAll(NORTH_REPLACEMENT);
+		gStopName = SOUTH_.matcher(gStopName).replaceAll(SOUTH_REPLACEMENT);
 		gStopName = CleanUtils.CLEAN_AT.matcher(gStopName).replaceAll(CleanUtils.CLEAN_AT_REPLACEMENT);
 		gStopName = CleanUtils.CLEAN_AND.matcher(gStopName).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		gStopName = CleanUtils.cleanStreetTypes(gStopName);
 		gStopName = CleanUtils.cleanNumbers(gStopName);
+		gStopName = CleanUtils.removePoints(gStopName);
 		return CleanUtils.cleanLabel(gStopName);
 	}
 
