@@ -186,9 +186,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, KINGSTON_GOSPEL_TEMPLE, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, CATARAQUI_CTR_TRANSFER_PT) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
-						Arrays.asList(new String[] { "S02077", "00850", "S00399" })) //
+						Arrays.asList(new String[] { "03006", "00850", "S00399" })) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
-						Arrays.asList(new String[] { "S00399", "00410", "S02078" })) //
+						Arrays.asList(new String[] { "S00399", "00410", "03007" })) //
 				.compileBothTripSort());
 		map2.put(17l, new RouteTripSpec(17l, //
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, MAIN_CAMPUS, //
