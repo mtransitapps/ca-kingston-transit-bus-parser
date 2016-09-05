@@ -186,17 +186,28 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, KINGSTON_GOSPEL_TEMPLE, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, CATARAQUI_CTR_TRANSFER_PT) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
-						Arrays.asList(new String[] { "03006", "00850", "S00399" })) //
+						Arrays.asList(new String[] { //
+						"03012", "00850", "S00399" //
+						})) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
-						Arrays.asList(new String[] { "S00399", "00410", "03007" })) //
+						Arrays.asList(new String[] { //
+						"S00399", "00410", //
+								"00097", // ==
+								"03008", // !=
+								"03012" // !=
+						})) //
 				.compileBothTripSort());
 		map2.put(17l, new RouteTripSpec(17l, //
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, MAIN_CAMPUS, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, WEST_CAMPUS) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
-						Arrays.asList(new String[] { "00472", "00439", "00429" })) //
+						Arrays.asList(new String[] { //
+						"00472", "00107", "S00444" //
+						})) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
-						Arrays.asList(new String[] { "00429", "00107", "00472" })) //
+						Arrays.asList(new String[] { //
+						"S00444", "S00430", "00472" //
+						})) //
 				.compileBothTripSort());
 		map2.put(20l, new RouteTripSpec(20l, //
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, MAIN_CAMPUS, //
