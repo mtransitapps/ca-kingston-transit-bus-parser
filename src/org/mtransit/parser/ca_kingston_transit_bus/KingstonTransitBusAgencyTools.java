@@ -187,14 +187,17 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, CATARAQUI_CTR_TRANSFER_PT) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
 						Arrays.asList(new String[] { //
-						"03012", "00850", "S00399" //
+								"S02084", // Cataraqui Centre Transfer Point Bay 7
+								"00850", // Centennial Drive
+								"S00399" // Kingston Gospel Temple
 						})) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
 						Arrays.asList(new String[] { //
-						"S00399", "00410", //
-								"00097", // ==
-								"03008", // !=
-								"03012" // !=
+						"S00399", // Kingston Gospel Temple
+								"00410", // Centennial Drive
+								"00097", // == Norwest Road
+								"S02079", // Cataraqui Centre Transfer Point Bay 3
+								"S02084", // Cataraqui Centre Transfer Point Bay 7
 						})) //
 				.compileBothTripSort());
 		map2.put(17l, new RouteTripSpec(17l, //
