@@ -90,12 +90,15 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public long getRouteId(GRoute gRoute) {
+		if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
+			return Long.parseLong(gRoute.getRouteShortName());
+		}
 		if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
 			return 1012;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
-		matcher.find();
-		return Integer.parseInt(matcher.group());
+		System.out.printf("\nUnexpected route ID for '%s'!\n", gRoute);
+		System.exit(-1);
+		return -1L;
 	}
 
 	private static final String ROUTE_1 = "St Lawrence College - Montreal St";
@@ -130,41 +133,48 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				return ROUTE_12A;
 			}
 			Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
-			matcher.find();
-			int digits = Integer.parseInt(matcher.group());
-			switch (digits) {
-			// @formatter:off
-			case 1: return ROUTE_1;
-			case 2: return ROUTE_2;
-			case 3: return ROUTE_3;
-			case 4: return ROUTE_4;
-			case 6: return ROUTE_6;
-			case 7: return ROUTE_7;
-			case 9: return ROUTE_9;
-			case 10: return ROUTE_10;
-			case 11: return ROUTE_11;
-			case 12: return ROUTE_12;
-			case 14: return ROUTE_14;
-			case 15: return ROUTE_15;
-			case 16: return ROUTE_16;
-			case 17: return ROUTE_17;
-			case 18: return ROUTE_18;
-			case 19: return ROUTE_19;
-			case 20: return ROUTE_20;
-			case 501: return ROUTE_501;
-			case 502: return ROUTE_502;
-			case 601: return ROUTE_601;
-			case 602: return ROUTE_602;
-			case 701: return ROUTE_701;
-			case 702: return ROUTE_702;
-			// @formatter:on
-			default:
-				System.out.printf("\nUnexpected route long name '%s'!", gRoute);
-				System.exit(-1);
-				return null;
+			if (matcher.find()) {
+				int digits = Integer.parseInt(matcher.group());
+				switch (digits) {
+				// @formatter:off
+				case 1: return ROUTE_1;
+				case 2: return ROUTE_2;
+				case 3: return ROUTE_3;
+				case 4: return ROUTE_4;
+				case 6: return ROUTE_6;
+				case 7: return ROUTE_7;
+				case 9: return ROUTE_9;
+				case 10: return ROUTE_10;
+				case 11: return ROUTE_11;
+				case 12: return ROUTE_12;
+				case 14: return ROUTE_14;
+				case 15: return ROUTE_15;
+				case 16: return ROUTE_16;
+				case 17: return ROUTE_17;
+				case 18: return ROUTE_18;
+				case 19: return ROUTE_19;
+				case 20: return ROUTE_20;
+				case 501: return ROUTE_501;
+				case 502: return ROUTE_502;
+				case 601: return ROUTE_601;
+				case 602: return ROUTE_602;
+				case 701: return ROUTE_701;
+				case 702: return ROUTE_702;
+				// @formatter:on
+				}
 			}
+			System.out.printf("\nUnexpected route long name '%s'!", gRoute);
+			System.exit(-1);
+			return null;
 		}
 		return super.getRouteLongName(gRoute);
+	}
+
+	@Override
+	public boolean mergeRouteLongName(MRoute mRoute, MRoute mRouteToMerge) {
+		System.out.printf("\nUnexpected routes to merge: %s & %s!\n", mRoute, mRouteToMerge);
+		System.exit(-1);
+		return false;
 	}
 
 	private static final String AGENCY_COLOR = "009BC9";
@@ -277,6 +287,13 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return CleanUtils.cleanLabel(tripHeadsign);
 	}
 
+	@Override
+	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
+		System.out.printf("\nUnexpected trips to merge: %s & %s!\n", mTrip, mTripToMerge);
+		System.exit(-1);
+		return false;
+	}
+
 	private static final Pattern SIDE = Pattern.compile("((^|\\W){1}(side)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
 	private static final String SIDE_REPLACEMENT = "$2$4";
 
@@ -322,30 +339,42 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			return Integer.valueOf(stopId); // using stop code as stop ID
 		}
 		if (PLACE_CATC.equals(stopId)) {
-			return 10000000;
+			return 900000;
 		} else if (PLACE_CHCA.equals(stopId)) {
-			return 11000000;
+			return 910000;
 		} else if (PLACE_DWNP.equals(stopId)) {
-			return 12000000;
+			return 920000;
 		} else if (PLACE_GRDC.equals(stopId)) {
-			return 13000000;
+			return 930000;
 		} else if (PLACE_KNGC.equals(stopId)) {
-			return 14000000;
+			return 940000;
 		} else if (PLACE_MSPR.equals(stopId)) {
-			return 15000000;
+			return 950000;
 		} else if (PLACE_RAIL.equals(stopId)) {
-			return 16000000;
+			return 960000;
+		}
+		if ("Smspr1".equals(stopId)) {
+			return 970000;
 		}
 		try {
 			Matcher matcher = DIGITS.matcher(stopId);
-			matcher.find();
-			int digits = Integer.parseInt(matcher.group());
-			return digits;
+			if (matcher.find()) {
+				int digits = Integer.parseInt(matcher.group());
+				if (stopId.startsWith("S")) {
+					return 190000 + digits;
+				}
+				System.out.printf("\nUnexpected stop ID for '%s'!\n", gStop);
+				System.exit(-1);
+				return digits;
+			}
 		} catch (Exception e) {
-			System.out.println("Error while finding stop ID for " + gStop);
+			System.out.printf("\nError while finding stop ID for '%s'!\n", gStop);
 			e.printStackTrace();
 			System.exit(-1);
 			return -1;
 		}
+		System.out.printf("\nUnexpected stop ID for '%s'!\n", gStop);
+		System.exit(-1);
+		return -1;
 	}
 }
