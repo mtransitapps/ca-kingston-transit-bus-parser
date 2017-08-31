@@ -32,6 +32,7 @@ import org.mtransit.parser.mt.data.MTrip;
 // https://www.cityofkingston.ca/residents/transit/about
 // https://www.cityofkingston.ca/cok/data/transit_feeds/
 // https://www.cityofkingston.ca/cok/data/transit_feeds/google_transit.zip
+// http://kingston.metrolinx.tmix.se/gtfs/gtfs.zip
 public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -94,7 +95,13 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			return Long.parseLong(gRoute.getRouteShortName());
 		}
 		if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
-			return 1012;
+			return 1012L;
+		}
+		if ("18Q".equals(gRoute.getRouteShortName())) {
+			return 17018L;
+		}
+		if ("COV".equals(gRoute.getRouteShortName())) {
+			return 99001L;
 		}
 		System.out.printf("\nUnexpected route ID for '%s'!\n", gRoute);
 		System.exit(-1);
@@ -132,6 +139,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
 				return ROUTE_12A;
 			}
+			if ("18Q".equals(gRoute.getRouteShortName())) {
+				return "Queen's Sunday Shuttle";
+			}
 			Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
 			if (matcher.find()) {
 				int digits = Integer.parseInt(matcher.group());
@@ -163,6 +173,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				// @formatter:on
 				}
 			}
+			if (isGoodEnoughAccepted()) {
+				return "Route " + gRoute.getRouteShortName();
+			}
 			System.out.printf("\nUnexpected route long name '%s'!", gRoute);
 			System.exit(-1);
 			return null;
@@ -192,12 +205,179 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
+		map2.put(1L, new RouteTripSpec(1L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "St Lawrence College", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Montreal St") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"Smspr1", // Montreal Street Park and Ride
+								"S02070", // St. Lawrence College Transfer Point
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S02070", // St. Lawrence College Transfer Point
+								"Smspr1", // Montreal Street Park and Ride
+						})) //
+				.compileBothTripSort());
+		map2.put(2L, new RouteTripSpec(2L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Kingston Ctr", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Division St") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"Smspr1", // Montreal Street Park and Ride
+								"S00451", // ==
+								"00855", // !=
+								"09087", // !=
+								"00450", // ==
+								"S00502", // Kingston Centre Transfer Point Platform 4
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S00502", // Kingston Centre Transfer Point Platform 4
+								"00449", // ==
+								"09086", // !=
+								"00454", // !=
+								"S00800", // ==
+								"Smspr1", // Montreal Street Park and Ride
+						})) //
+				.compileBothTripSort());
+		map2.put(3L, new RouteTripSpec(3L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Kingston Ctr") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S00503", // Kingston Centre Transfer Point Platform 6
+								"S02035", // Downtown Transfer Point Platform 1
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S02035", // Downtown Transfer Point Platform 1
+								"S00503", // Kingston Centre Transfer Point Platform 6
+						})) //
+				.compileBothTripSort());
+		map2.put(4L, new RouteTripSpec(4L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Cataraqui Ctr") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S02077", // Cataraqui Centre Transfer Point Platform 1
+								"S00501", // Kingston Centre Transfer Point Platform 2
+								"09082", // ==
+								"S02037", // != Brock Street (north side) west of Bagot Street
+								"S02039", // != Bagot Street (west side) north of Brock Street
+								"S02035", // != Downtown Transfer Point Platform 1
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S02037", // != Brock Street (north side) west of Bagot Street
+								"S02077", // Cataraqui Centre Transfer Point Platform 1
+						})) //
+				.compileBothTripSort());
+		map2.put(6L, new RouteTripSpec(6L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "St Lawrence College", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Cataraqui Ctr") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S02079", // Cataraqui Centre Transfer Point Platform 3
+								"S02070", // St. Lawrence College Transfer Point
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S02070", // St. Lawrence College Transfer Point
+								"00097", // ==
+								"S02079", // Cataraqui Centre Transfer Point Platform 3
+								"S02084", // Cataraqui Centre Transfer Point Platform 7
+						})) //
+				.compileBothTripSort());
+		map2.put(7L, new RouteTripSpec(7L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Dalton / Division", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Invista Ctr") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S00712", // INVISTA Centre
+								"S02014", // Bus Terminal Transfer Point on John Counter
+								"00728", // Dalton Avenue (east side of Grant Timmins)
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"00728", // Dalton Avenue (east side of Grant Timmins)
+								"S00052", // John Counter Boulevard (east side of Leroy Grant)
+								"S02007", // Bus Terminal Transfer Point
+								"09050", // ++
+								"S00712", // INVISTA Centre
+						})) //
+				.compileBothTripSort());
+		map2.put(10L, new RouteTripSpec(10L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Cataraqui Ctr", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Amherstview") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S09088", // Speers Boulevard (north side of Kildare)
+								"S02084", // Cataraqui Centre Transfer Point Platform 7
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S02084", // Cataraqui Centre Transfer Point Platform 7
+								"S09088", // Speers Boulevard (north side of Kildare)
+						})) //
+				.compileBothTripSort());
+		map2.put(11L, new RouteTripSpec(11L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Kingston Ctr", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Cataraqui Ctr") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S02082", // Cataraqui Centre Transfer Point Platform 5
+								"S02075", // Gardiners Centre Transfer Point
+								"09029", // ==
+								"09026", // !=
+								"09018", // ==
+								"02008", // ==
+								"S00506", // Kingston Centre Transfer Point Platform 5
+								"S00502", // Kingston Centre Transfer Point Platform 4
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S00506", // Kingston Centre Transfer Point Platform 5
+								"S02082", // Cataraqui Centre Transfer Point Platform 5
+						})) //
+				.compileBothTripSort());
+		map2.put(12L, new RouteTripSpec(12L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Kingston Ctr", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Hwy 15") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S09205",// Rideau Town Centre (south side of Gore)
+								"S02035", // Downtown Transfer Point Platform 1
+								"00326", // ==
+								"S00502", // Kingston Centre Transfer Point Platform 4
+								"S00501", // Kingston Centre Transfer Point Platform 2
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S00502", // Kingston Centre Transfer Point Platform 4
+								"S09205",// Rideau Town Centre (south side of Gore)
+						})) //
+				.compileBothTripSort());
+		map2.put(13L, new RouteTripSpec(13L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", // Extra Bus
+				1, MTrip.HEADSIGN_TYPE_STRING, "St Lawrence College") // SLC // Extra Bus
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S02070", // St. Lawrence College Transfer Point
+								"S02039", // Bagot Street (west side) north of Brock Street
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S02039", // Bagot Street (west side) north of Brock Street
+								"S02070", // St. Lawrence College Transfer Point
+						})) //
+				.compileBothTripSort());
 		map2.put(14l, new RouteTripSpec(14l, //
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, KINGSTON_GOSPEL_TEMPLE, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, CATARAQUI_CTR_TRANSFER_PT) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
 						Arrays.asList(new String[] { //
-								"S02084", // Cataraqui Centre Transfer Point Bay 7
+						"S02084", // Cataraqui Centre Transfer Point Bay 7
 								"00850", // Centennial Drive
 								"S00399" // Kingston Gospel Temple
 						})) //
@@ -208,6 +388,23 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00097", // == Norwest Road
 								"S02079", // Cataraqui Centre Transfer Point Bay 3
 								"S02084", // Cataraqui Centre Transfer Point Bay 7
+						})) //
+				.compileBothTripSort());
+		map2.put(16L, new RouteTripSpec(16L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Train Sta", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Bus Terminal") // ??
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S09074", // John Counter Boulevard (west side of Leroy Grant)
+								"02021", // ==
+								"S02007", // != Bus Terminal Transfer Point
+								"00237", // !=
+								"S00396", // Train Station Transfer Point
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S00396", // Train Station Transfer Point
+								"S09074", // John Counter Boulevard (west side of Leroy Grant)
 						})) //
 				.compileBothTripSort());
 		map2.put(17l, new RouteTripSpec(17l, //
@@ -222,6 +419,40 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						"S00444", "S00430", "00472" //
 						})) //
 				.compileBothTripSort());
+		map2.put(18L, new RouteTripSpec(18L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Train Sta", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "St Lawrence College") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S02070", // St. Lawrence College Transfer Point
+								"00374", // ++
+								"S00396", // Train Station Transfer Point
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S00396", // Train Station Transfer Point
+								"S02007", // Bus Terminal Transfer Point
+								"S02039", // Bagot Street (west side) north of Brock Street
+								"S02070", // St. Lawrence College Transfer Point
+						})) //
+				.compileBothTripSort());
+		map2.put(17018L, new RouteTripSpec(17018L, // 18Q
+				0, MTrip.HEADSIGN_TYPE_STRING, "Queen's", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "St Lawrence College") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S00396", // Train Station Transfer Point
+								"S02007", // Bus Terminal Transfer Point
+								"00710", // Victoria Hall (north side of Bader
+								"09080", // St. Lawrence Avenue (south side of Stuart #QUEEN_S_UNIVERSITY
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"09080", // St. Lawrence Avenue (south side of Stuart #QUEEN_S_UNIVERSITY
+								"S02070", // St. Lawrence College Transfer Point
+								"00472", // Van Order Drive (north side of Norman Rogers)
+						})) //
+				.compileBothTripSort());
 		map2.put(20l, new RouteTripSpec(20l, //
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, MAIN_CAMPUS, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, WEST_CAMPUS) //
@@ -229,6 +460,37 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { "S02009", "S00417", "S02042" })) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
 						Arrays.asList(new String[] { "S02042", "S00411", "S02009" })) //
+				.compileBothTripSort());
+		map2.put(501L, new RouteTripSpec(501L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Cataraqui Ctr") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S02077", // Cataraqui Centre Transfer Point Platform 1
+								"S02039", // Bagot Street (west side) north of Brock Street
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S02039", // Bagot Street (west side) north of Brock Street
+								"S02003", // Bayridge Centre (east side of Bayridge)
+								"S02077", // Cataraqui Centre Transfer Point Platform 1
+						})) //
+				.compileBothTripSort());
+		map2.put(502L, new RouteTripSpec(502L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Cataraqui Ctr") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S02078", // Cataraqui Centre Transfer Point Platform 2
+								"S00426", // Kingston General Hospital (south side of Stuart)
+								"S02037", // Brock Street (north side) west of Bagot Street
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S02037", // Brock Street (north side) west of Bagot Street
+								"S09041", // ++
+								"S02078", // Cataraqui Centre Transfer Point Platform 2
+						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
 	}
@@ -257,8 +519,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return super.splitTripStop(mRoute, gTrip, gTripStop, splitTrips, routeGTFS);
 	}
 
-	private static final String CATARAQUI = "Cataraqui";
-	private static final String CATARAQUI_LC = CATARAQUI.toLowerCase(Locale.ENGLISH);
 	private static final String VIA = " via ";
 
 	@Override
@@ -266,13 +526,23 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
 		}
-		if (mRoute.getId() == 15l) {
-			if (gTrip.getTripHeadsign().toLowerCase(Locale.ENGLISH).startsWith(CATARAQUI_LC)) {
-				mTrip.setHeadsignString(CATARAQUI, gTrip.getDirectionId());
+		if (isGoodEnoughAccepted()) {
+			if (mRoute.getId() == 15L && gTrip.getDirectionId() == null) {
+				if ("Reddendale".equals(gTrip.getTripHeadsign()) //
+						|| "Kingston Centre".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+					return;
+				} else if ("Cataraqui Centre".equals(gTrip.getTripHeadsign()) //
+						|| "Cataraqui Centre/Cataraqui Woods".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+					return;
+				}
+				System.out.printf("\nUnexpected trip head sign for %s!\n", gTrip);
+				System.exit(-1);
 				return;
 			}
 		}
-		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), gTrip.getDirectionId());
+		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), gTrip.getDirectionId() == null ? 0 : gTrip.getDirectionId());
 	}
 
 	private static final Pattern STARTS_WITH_EXPRESS = Pattern.compile("(^(express -) )*", Pattern.CASE_INSENSITIVE);
@@ -284,6 +554,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			tripHeadsign = tripHeadsign.substring(0, indexOfVIA);
 		}
 		tripHeadsign = STARTS_WITH_EXPRESS.matcher(tripHeadsign).replaceAll(StringUtils.EMPTY);
+		tripHeadsign = CleanUtils.SAINT.matcher(tripHeadsign).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		tripHeadsign = CleanUtils.removePoints(tripHeadsign);
 		tripHeadsign = CleanUtils.cleanSlashes(tripHeadsign);
 		tripHeadsign = CleanUtils.cleanStreetTypes(tripHeadsign);
@@ -292,6 +563,25 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
+		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
+		if (mTrip.getRouteId() == 15l) {
+			if (Arrays.asList( //
+					"Kingston Ctr", //
+					"Reddendale"//
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Reddendale", mTrip.getHeadsignId());
+				return true;
+			} else if (Arrays.asList( //
+					"Cataraqui Ctr", //
+					"Cataraqui Ctr / Cataraqui Woods"//
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Cataraqui Ctr", mTrip.getHeadsignId());
+				return true;
+			}
+		}
+		if (isGoodEnoughAccepted()) {
+			return super.mergeHeadsign(mTrip, mTripToMerge);
+		}
 		System.out.printf("\nUnexpected trips to merge: %s & %s!\n", mTrip, mTripToMerge);
 		System.exit(-1);
 		return false;
