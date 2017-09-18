@@ -216,6 +216,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S02070", // St. Lawrence College Transfer Point
+								"00300", // ==
+								"03021", // !=
+								"S02040", // !=
+								"00269", // ==
+								"00174", // ==
+								"00173", // !=
+								"09238", // !=
+								"00171", // ==
 								"Smspr1", // Montreal Street Park and Ride
 						})) //
 				.compileBothTripSort());
@@ -238,6 +246,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"09086", // !=
 								"00454", // !=
 								"S00800", // ==
+								"00300", // ==
+								"S02036", // !=
+								"S02037", // !=
+								"00294", // ==
 								"Smspr1", // Montreal Street Park and Ride
 						})) //
 				.compileBothTripSort());
@@ -247,11 +259,15 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"S00503", // Kingston Centre Transfer Point Platform 6
-								"S02035", // Downtown Transfer Point Platform 1
+								"00305", // ==
+								"03018", // != Brock Street (north side) east of Montreal Street
+								"S02035", // != Downtown Transfer Point Platform 1
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"S02035", // Downtown Transfer Point Platform 1
+						"S02035", // !=Downtown Transfer Point Platform 1
+								"03018", // != Brock Street (north side) east of Montreal Street
+								"00303", // ==
 								"S00503", // Kingston Centre Transfer Point Platform 6
 						})) //
 				.compileBothTripSort());
@@ -265,6 +281,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"09082", // ==
 								"S02037", // != Brock Street (north side) west of Bagot Street
 								"S02039", // != Bagot Street (west side) north of Brock Street
+								"03019", // Brock Street (north side) east of Montreal)
 								"S02035", // != Downtown Transfer Point Platform 1
 						})) //
 				.addTripSort(1, //
@@ -346,8 +363,15 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				1, MTrip.HEADSIGN_TYPE_STRING, "Hwy 15") //
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
-						"S09205",// Rideau Town Centre (south side of Gore)
-								"S02035", // Downtown Transfer Point Platform 1
+						"S09205", // Rideau Town Centre (south side of Gore)
+								"00132", // ==
+								"02010", // !=
+								"09065", // !=
+								"00089", // !=
+								"S00029", // ==
+								"00305", // ==
+								"S02035", // != Downtown Transfer Point Platform 1
+								"03019", // != Brock Street (north side) east of Montreal)
 								"00326", // ==
 								"S00502", // Kingston Centre Transfer Point Platform 4
 								"S00501", // Kingston Centre Transfer Point Platform 2
@@ -355,6 +379,15 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S00502", // Kingston Centre Transfer Point Platform 4
+								"00092", // ==
+								"S02038", // !=
+								"03015", // !=
+								"00042", // ==
+								"S00115", // ==
+								"00079", // !=
+								"00088", // !=
+								"09064", // !=
+								"09225", // ==
 								"S09205",// Rideau Town Centre (south side of Gore)
 						})) //
 				.compileBothTripSort());
