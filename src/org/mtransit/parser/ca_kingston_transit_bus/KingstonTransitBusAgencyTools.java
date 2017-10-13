@@ -81,6 +81,11 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
+	public boolean excludeRoute(GRoute gRoute) {
+		return super.excludeRoute(gRoute);
+	}
+
+	@Override
 	public Integer getAgencyRouteType() {
 		return MAgency.ROUTE_TYPE_BUS;
 	}
@@ -119,6 +124,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String ROUTE_11 = "Kingston Centre - Cataraqui Centre";
 	private static final String ROUTE_12 = "Highway 15 - Kingston Centre";
 	private static final String ROUTE_12A = "CFB Kingston - Downtown Transfer Point";
+	private static final String ROUTE_13 = "Downtown - SLC (Extra Bus)"; // not official
 	private static final String ROUTE_14 = "Crossfield Ave / Waterloo Dr";
 	private static final String ROUTE_15 = "Reddendale - Cataraqui Woods / Cataraqui Centre";
 	private static final String ROUTE_16 = "Bus Terminal - Train Station";
@@ -142,6 +148,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			if ("18Q".equals(gRoute.getRouteShortName())) {
 				return "Queen's Sunday Shuttle";
 			}
+			if ("COV".equals(gRoute.getRouteShortName())) {
+				return "Cataraqui Ctr"; // not official
+			}
 			Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
 			if (matcher.find()) {
 				int digits = Integer.parseInt(matcher.group());
@@ -157,6 +166,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				case 10: return ROUTE_10;
 				case 11: return ROUTE_11;
 				case 12: return ROUTE_12;
+				case 13: return ROUTE_13;
 				case 14: return ROUTE_14;
 				case 15: return ROUTE_15;
 				case 16: return ROUTE_16;
@@ -233,6 +243,11 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"Smspr1", // Montreal Street Park and Ride
+								"00168", // ==
+								"00166", // !=
+								"00164", // !=
+								"09092", // !=
+								"00181", // ==
 								"S00451", // ==
 								"00855", // !=
 								"09087", // !=
@@ -248,7 +263,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"S00800", // ==
 								"00300", // ==
 								"S02036", // !=
-								"S02037", // !=
 								"00294", // ==
 								"Smspr1", // Montreal Street Park and Ride
 						})) //
@@ -559,21 +573,19 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
 		}
-		if (isGoodEnoughAccepted()) {
-			if (mRoute.getId() == 15L && gTrip.getDirectionId() == null) {
-				if ("Reddendale".equals(gTrip.getTripHeadsign()) //
-						|| "Kingston Centre".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
-					return;
-				} else if ("Cataraqui Centre".equals(gTrip.getTripHeadsign()) //
-						|| "Cataraqui Centre/Cataraqui Woods".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
-					return;
-				}
-				System.out.printf("\nUnexpected trip head sign for %s!\n", gTrip);
-				System.exit(-1);
+		if (mRoute.getId() == 15L && gTrip.getDirectionId() == null) {
+			if ("Reddendale".equals(gTrip.getTripHeadsign()) //
+					|| "Kingston Centre".equals(gTrip.getTripHeadsign())) {
+				mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				return;
+			} else if ("Cataraqui Centre".equals(gTrip.getTripHeadsign()) //
+					|| "Cataraqui Centre/Cataraqui Woods".equals(gTrip.getTripHeadsign())) {
+				mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
 				return;
 			}
+			System.out.printf("\nUnexpected trip head sign for %s!\n", gTrip);
+			System.exit(-1);
+			return;
 		}
 		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), gTrip.getDirectionId() == null ? 0 : gTrip.getDirectionId());
 	}
