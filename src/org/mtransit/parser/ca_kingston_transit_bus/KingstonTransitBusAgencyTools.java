@@ -221,17 +221,27 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"Smspr1", // Montreal Street Park and Ride
+								"00152", // ==
+								"00143", // !=
+								"09237", // !=
+								"00170", // ==
+								"00201", // !=
+								"00203", // <>
+								"02018", // <>
+								"00202", // !=
 								"S02070", // St. Lawrence College Transfer Point
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S02070", // St. Lawrence College Transfer Point
 								"00300", // ==
-								"03021", // !=
 								"S02040", // !=
 								"00269", // ==
+								"00199", // !=
+								"00203", // <>
+								"02018", // <>
+								"00200", // !=
 								"00174", // ==
-								"00173", // !=
 								"09238", // !=
 								"00171", // ==
 								"Smspr1", // Montreal Street Park and Ride
