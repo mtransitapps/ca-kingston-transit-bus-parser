@@ -29,10 +29,9 @@ import org.mtransit.parser.mt.data.MTripStop;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.mt.data.MTrip;
 
-// https://www.cityofkingston.ca/residents/transit/about
-// https://www.cityofkingston.ca/cok/data/transit_feeds/
-// https://www.cityofkingston.ca/cok/data/transit_feeds/google_transit.zip
-// http://kingston.metrolinx.tmix.se/gtfs/gtfs.zip
+// https://openkingston.cityofkingston.ca/explore/dataset/transit-gtfs-routes/
+// https://opendatakingston.cityofkingston.ca/explore/dataset/transit-gtfs-stops/
+// https://api.cityofkingston.ca/gtfs/gtfs.zip
 public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -220,11 +219,11 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				1, MTrip.HEADSIGN_TYPE_STRING, "Montreal St") //
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
-						"Smspr1", // Montreal Street Park and Ride
-								"00152", // ==
-								"00143", // !=
-								"09237", // !=
-								"00170", // ==
+						"Smspr1", // != Montreal Street Park and Ride <=
+								"00170", // !=
+								"00150", // != Joyce Street (north side of Guthrie) <=
+								"00168", // !=
+								"00172", // ==
 								"00201", // !=
 								"00203", // <>
 								"02018", // <>
@@ -235,16 +234,20 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"S02070", // St. Lawrence College Transfer Point
 								"00300", // ==
-								"S02040", // !=
-								"00269", // ==
+								"S02040", // ==
+								"09093", // !=
+								"00269", // !=
+								"00264", // !=
+								"00261", // ==
 								"00199", // !=
 								"00203", // <>
 								"02018", // <>
 								"00200", // !=
-								"00174", // ==
-								"09238", // !=
 								"00171", // ==
-								"Smspr1", // Montreal Street Park and Ride
+								"00146", // !=
+								"00150", // != Joyce Street (north side of Guthrie =>
+								"00148", // !=
+								"Smspr1", // != Montreal Street Park and Ride =>
 						})) //
 				.compileBothTripSort());
 		map2.put(2L, new RouteTripSpec(2L, //
@@ -252,12 +255,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				1, MTrip.HEADSIGN_TYPE_STRING, "Division St") //
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
-						"Smspr1", // Montreal Street Park and Ride
+						"Smspr1", // != Montreal Street Park and Ride <=
+								"00150", // Joyce Street (north side of Guthrie)
 								"00168", // ==
-								"00166", // !=
-								"00164", // !=
-								"09092", // !=
-								"00181", // ==
 								"S00451", // ==
 								"00855", // !=
 								"09087", // !=
@@ -271,10 +271,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"09086", // !=
 								"00454", // !=
 								"S00800", // ==
-								"00300", // ==
-								"S02036", // !=
-								"00294", // ==
-								"Smspr1", // Montreal Street Park and Ride
+								"00142", // ==
+								"00150", // != Joyce Street (north side of Guthrie) =>
+								"00144", // !=
+								"Smspr1", // Montreal Street Park and Ride =>
 						})) //
 				.compileBothTripSort());
 		map2.put(3L, new RouteTripSpec(3L, //
@@ -331,21 +331,51 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						})) //
 				.compileBothTripSort());
 		map2.put(7L, new RouteTripSpec(7L, //
-				0, MTrip.HEADSIGN_TYPE_STRING, "Dalton / Division", //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Rideau Hts", // Dalton / Division
 				1, MTrip.HEADSIGN_TYPE_STRING, "Invista Ctr") //
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"S00712", // INVISTA Centre
-								"S02014", // Bus Terminal Transfer Point on John Counter
-								"00728", // Dalton Avenue (east side of Grant Timmins)
+								"09044", // ==
+								"S02014", // != Bus Terminal Transfer Point on John Counter
+								"00218", // !=
+								"S09074", // != Bus Terminal Transfer Point
+								"02021", // !=
+								"00746", // ==
+								"00847", // ==
+								"00207", // !=
+								"00728", // != Dalton Avenue (east side of Grant Timmins) =>
+								"09094", // !=
+								"00150", // != Joyce Street (north side of Guthrie) =>
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"00728", // Dalton Avenue (east side of Grant Timmins)
-								"S00052", // John Counter Boulevard (east side of Leroy Grant)
-								"S02007", // Bus Terminal Transfer Point
-								"09050", // ++
+						"00150", // != Joyce Street (north side of Guthrie) <=
+								"09095", // !=
+								"00728", // Dalton Avenue (east side of Grant Timmins) <=
+								"00206", // !=
+								"00182", // ==
+								"S00052", // == Bus Terminal Transfer Point
+								"S02007", // != Bus Terminal Transfer Point =>
+								"09050", // !=
 								"S00712", // INVISTA Centre
+						})) //
+				.compileBothTripSort());
+		map2.put(8L, new RouteTripSpec(8L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "St Lawrence College") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"S02070", // St. Lawrence College Transfer Point
+								"00300", // ==
+								"S02039", // != Downtown Transfer Point Platform 4 =>
+								"S02037", // != Downtown Transfer Point Platform 3 =>
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"S02039", // Downtown Transfer Point Platform 4
+								"00107", // ++
+								"S02070", // St. Lawrence College Transfer Point
 						})) //
 				.compileBothTripSort());
 		map2.put(10L, new RouteTripSpec(10L, //
@@ -391,22 +421,28 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00132", // ==
 								"02010", // !=
 								"09065", // !=
-								"00089", // !=
-								"S00029", // ==
+								"00755", // != <>
+								"00089", // != <>
+								"S00029", // == <>
+								"00086", // == !=
 								"00305", // ==
 								"S02035", // != Downtown Transfer Point Platform 1
-								"03019", // != Brock Street (north side) east of Montreal)
 								"00326", // ==
-								"S00502", // Kingston Centre Transfer Point Platform 4
-								"S00501", // Kingston Centre Transfer Point Platform 2
+								"S00502", // != Kingston Centre Transfer Point Platform 4
+								"S00501", // != Kingston Centre Transfer Point Platform 2
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S00502", // Kingston Centre Transfer Point Platform 4
 								"00092", // ==
-								"S02038", // !=
-								"03015", // !=
+								"S02038", // != Downtown Transfer Point Platform 5
 								"00042", // ==
+								"S00126", // ==
+								"09096", // !=
+								"00755", // != <>
+								"00089", // != <>
+								"S00029", // == <> Princess Mary Avenue (north side of Cambrai)
+								"00124", // !=
 								"S00115", // ==
 								"00079", // !=
 								"00088", // !=
@@ -429,7 +465,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"S02070", // St. Lawrence College Transfer Point
 						})) //
 				.compileBothTripSort());
-		map2.put(14l, new RouteTripSpec(14l, //
+		map2.put(14L, new RouteTripSpec(14L, // Waterloo Dr / Crossfield Ave
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, KINGSTON_GOSPEL_TEMPLE, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, CATARAQUI_CTR_TRANSFER_PT) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
@@ -449,19 +485,35 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.compileBothTripSort());
 		map2.put(16L, new RouteTripSpec(16L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, "Train Sta", //
-				1, MTrip.HEADSIGN_TYPE_STRING, "Bus Terminal") // ??
+				1, MTrip.HEADSIGN_TYPE_STRING, "Division / Dalton") // Bus Terminal
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
-						"S09074", // John Counter Boulevard (west side of Leroy Grant)
+						"00728", // Dalton Avenue (east side of Grant Timmins)
+								"00832", // ==
+								"00216", // != <>
+								"00690", // != <>
+								"S02014", // != <> Bus Terminal Transfer Point =>
+								"S00052", // != <> Bus Terminal Transfer Point =>
+								"00217", // !=
+								"S09074", // Bus Terminal Transfer Point
 								"02021", // ==
 								"S02007", // != Bus Terminal Transfer Point
 								"00237", // !=
-								"S00396", // Train Station Transfer Point
+								"S00396", // Train Station Transfer Point =>
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S00396", // Train Station Transfer Point
-								"S09074", // John Counter Boulevard (west side of Leroy Grant)
+								"09229", // !=
+								"00216", // <>
+								"00051", // <>
+								"00690", // <> ==
+								"00217", // != <>
+								"S09074", // != Bus Terminal Transfer Point =>
+								"S00052", // != <> Bus Terminal Transfer Point =>
+								"S02014", // <> != Bus Terminal Transfer Point
+								"00218", // !=
+								"00728", // Dalton Avenue (east side of Grant Timmins)
 						})) //
 				.compileBothTripSort());
 		map2.put(17l, new RouteTripSpec(17l, //
@@ -524,6 +576,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"S02077", // Cataraqui Centre Transfer Point Platform 1
+								"S09042", // Kingston Centre (south side of Princess)
 								"S02039", // Bagot Street (west side) north of Brock Street
 						})) //
 				.addTripSort(1, //
@@ -555,7 +608,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public int compareEarly(long routeId, List<MTripStop> list1, List<MTripStop> list2, MTripStop ts1, MTripStop ts2, GStop ts1GStop, GStop ts2GStop) {
 		if (ALL_ROUTE_TRIPS2.containsKey(routeId)) {
-			return ALL_ROUTE_TRIPS2.get(routeId).compare(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
+			return ALL_ROUTE_TRIPS2.get(routeId).compare(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop, this);
 		}
 		return super.compareEarly(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
 	}
@@ -571,7 +624,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public Pair<Long[], Integer[]> splitTripStop(MRoute mRoute, GTrip gTrip, GTripStop gTripStop, ArrayList<MTrip> splitTrips, GSpec routeGTFS) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
-			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.getId()));
+			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.getId()), this);
 		}
 		return super.splitTripStop(mRoute, gTrip, gTripStop, splitTrips, routeGTFS);
 	}
@@ -633,9 +686,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString("Cataraqui Ctr", mTrip.getHeadsignId());
 				return true;
 			}
-		}
-		if (isGoodEnoughAccepted()) {
-			return super.mergeHeadsign(mTrip, mTripToMerge);
 		}
 		System.out.printf("\nUnexpected trips to merge: %s & %s!\n", mTrip, mTripToMerge);
 		System.exit(-1);
