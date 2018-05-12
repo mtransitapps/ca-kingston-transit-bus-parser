@@ -219,15 +219,19 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				1, MTrip.HEADSIGN_TYPE_STRING, "Montreal St") //
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
-						"Smspr1", // != Montreal Street Park and Ride <=
-								"00170", // !=
-								"00150", // != Joyce Street (north side of Guthrie) <=
+						"00150", // != Joyce Street (north side of Guthrie) <=
+								"00154", // Sutherland Drive (west side of Virginia)
 								"00168", // !=
 								"00172", // ==
 								"00201", // !=
 								"00203", // <>
 								"02018", // <>
 								"00202", // !=
+								"00254", // == Charles Street (west side of Montreal)
+								"00256", // != John Street (west side of Montreal)
+								"00258", // != Bagot Street (south side of Raglan)
+								"09097", // != Raglan Road (west side of Montreal)
+								"02030", // == Rideaucrest Home (west side of Rideau)
 								"S02070", // St. Lawrence College Transfer Point
 						})) //
 				.addTripSort(1, //
@@ -236,8 +240,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00300", // ==
 								"S02040", // ==
 								"09093", // !=
-								"00269", // !=
-								"00264", // !=
 								"00261", // ==
 								"00199", // !=
 								"00203", // <>
@@ -246,8 +248,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00171", // ==
 								"00146", // !=
 								"00150", // != Joyce Street (north side of Guthrie =>
-								"00148", // !=
-								"Smspr1", // != Montreal Street Park and Ride =>
 						})) //
 				.compileBothTripSort());
 		map2.put(2L, new RouteTripSpec(2L, //
@@ -592,6 +592,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"S02078", // Cataraqui Centre Transfer Point Platform 2
+								"S00413", // Sir John A Macdonald Blvd. (south side of King)
 								"S00426", // Kingston General Hospital (south side of Stuart)
 								"S02037", // Brock Street (north side) west of Bagot Street
 						})) //
