@@ -232,11 +232,17 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00258", // != Bagot Street (south side of Raglan)
 								"09097", // != Raglan Road (west side of Montreal)
 								"02030", // == Rideaucrest Home (west side of Rideau)
-								"S02070", // St. Lawrence College Transfer Point
+								"00459", // == Portsmouth Avenue (north side of King)
+								"00751", // != Baiden Street (west side of Portsmouth) =>
+								"00460", // != Baiden Street (east side of Portsmouth)
+								"00464", // Calderwood Drive (east side of Portsmouth)
+								"S02070", // St. Lawrence College Transfer Point =>
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"S02070", // St. Lawrence College Transfer Point
+						"S02070", // St. Lawrence College Transfer Point <=
+								"00751", // Baiden Street (west side of Portsmouth)
+								"02069", // ==
 								"00300", // ==
 								"S02040", // ==
 								"09093", // !=
@@ -256,8 +262,16 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"Smspr1", // != Montreal Street Park and Ride <=
-								"00150", // Joyce Street (north side of Guthrie)
-								"00168", // ==
+								"00150", // Joyce Street (north side of Guthrie) <=
+								"00145", // ==
+								"00168", // ++
+								"09076", // ++
+								"00459", // == Portsmouth Avenue (north side of King)
+								"00460", // != != Baiden Street (east side of Portsmouth)
+								"00464", // != <> Calderwood Drive (east side of Portsmouth)
+								"S02070", // != <> St. Lawrence College Transfer Point
+								"00463", // != != Churchill Street (east side of Portsmouth)
+								"00461", // == Cartwright Street (south side of Churchill)
 								"S00451", // ==
 								"00855", // !=
 								"09087", // !=
@@ -271,6 +285,16 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"09086", // !=
 								"00454", // !=
 								"S00800", // ==
+								"00452", // ==
+								"00464", // != !=
+								"00464", // != <> Calderwood Drive (east side of Portsmouth)
+								"S02070", // != <>
+								"00751", // == !=
+								"S02036", // == Downtown Transfer Point Platform 2
+								"03020", // != Barrie Street (north side of Queen)
+								"00294", // != Clergy Street (north side of Brock)
+								"00273", // != Princess Street (east side of Division)
+								"00279", // == Colborne Street (east side of Division)
 								"00142", // ==
 								"00150", // != Joyce Street (north side of Guthrie) =>
 								"00144", // !=
@@ -283,15 +307,26 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"S00503", // Kingston Centre Transfer Point Platform 6
+								"00467", // ==
+								"03023", // !=
+								"S02070", // != <>
+								"00751", // ==
 								"00305", // ==
 								"03018", // != Brock Street (north side) east of Montreal Street
 								"S02035", // != Downtown Transfer Point Platform 1
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"S02035", // !=Downtown Transfer Point Platform 1
+						"S02035", // != Downtown Transfer Point Platform 1
 								"03018", // != Brock Street (north side) east of Montreal Street
 								"00303", // ==
+								"00459", // ==
+								"00460", // !=
+								"00463", // !=
+								"00464", // xx
+								"S02070", // != <>
+								"00464", // xx
+								"00465", // ==
 								"S00503", // Kingston Centre Transfer Point Platform 6
 						})) //
 				.compileBothTripSort());
@@ -302,15 +337,23 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"S02077", // Cataraqui Centre Transfer Point Platform 1
 								"S00501", // Kingston Centre Transfer Point Platform 2
+								"09070", // ==
+								"00290", // !=
+								"09082", // != ==
+								"00277", // !=
+								"03005", // != ==
 								"09082", // ==
 								"S02037", // != Brock Street (north side) west of Bagot Street
 								"S02039", // != Bagot Street (west side) north of Brock Street
-								"03019", // Brock Street (north side) east of Montreal)
-								"S02035", // != Downtown Transfer Point Platform 1
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S02037", // != Brock Street (north side) west of Bagot Street
+								"S00292", // ==
+								"00273", // !=
+								"00278", // !=
+								"00274", // !=
+								"00275", // ==
 								"S02077", // Cataraqui Centre Transfer Point Platform 1
 						})) //
 				.compileBothTripSort());
@@ -320,11 +363,16 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"S02079", // Cataraqui Centre Transfer Point Platform 3
-								"S02070", // St. Lawrence College Transfer Point
+								"00520", // ==
+								"00751", // != Baiden Street (west side of Portsmouth) =>
+								"00460", // !=
+								"S02070", // St. Lawrence College Transfer Point =>
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"S02070", // St. Lawrence College Transfer Point
+						"S02070", // St. Lawrence College Transfer Point <=
+								"00751", // Baiden Street (west side of Portsmouth) <=
+								"00521", // ==
 								"00097", // ==
 								"S02079", // Cataraqui Centre Transfer Point Platform 3
 								"S02084", // Cataraqui Centre Transfer Point Platform 7
@@ -533,16 +581,23 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				1, MTrip.HEADSIGN_TYPE_STRING, "St Lawrence College") //
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
-						"S02070", // St. Lawrence College Transfer Point
+						"S02070", // != St. Lawrence College Transfer Point <=
+								"00463", // != Churchill Street (east side of Portsmouth) <=
+								"00464", // == xx
+								"00465", // == !=
 								"00374", // ++
 								"S00396", // Train Station Transfer Point
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S00396", // Train Station Transfer Point
-								"S02007", // Bus Terminal Transfer Point
-								"S02039", // Bagot Street (west side) north of Brock Street
-								"S02070", // St. Lawrence College Transfer Point
+								"S02007", // Bus Terminal Transfer Point Platform 1
+								"S02039", // Downtown Transfer Point Platform 4
+								"00459", // ==
+								"00463", // != Churchill Street (east side of Portsmouth) =>
+								"00460", // !=
+								"00464", // != xx
+								"S02070", // != St. Lawrence College Transfer Point =>
 						})) //
 				.compileBothTripSort());
 		map2.put(17018L, new RouteTripSpec(17018L, // 18Q
