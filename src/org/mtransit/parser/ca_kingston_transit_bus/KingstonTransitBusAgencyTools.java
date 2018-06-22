@@ -787,6 +787,11 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String PLACE_RAIL = "place_rail";
 
 	@Override
+	public String getStopCode(GStop gStop) {
+		return gStop.getStopId(); // using stop ID as stop code (useful to match with GTFS real-time)
+	}
+
+	@Override
 	public int getStopId(GStop gStop) {
 		String stopId = gStop.getStopId();
 		if (stopId != null && stopId.length() > 0 && Utils.isDigitsOnly(stopId)) {
