@@ -225,22 +225,19 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00172", // ==
 								"00201", // !=
 								"00203", // <>
+								"00746", // <>
+								"S09056", // <>
+								"09068", // <>
 								"02018", // <>
 								"00202", // !=
 								"00254", // == Charles Street (west side of Montreal)
-								"00256", // != John Street (west side of Montreal)
-								"00258", // != Bagot Street (south side of Raglan)
 								"09097", // != Raglan Road (west side of Montreal)
 								"02030", // == Rideaucrest Home (west side of Rideau)
 								"00459", // == Portsmouth Avenue (north side of King)
 								"00751", // != Baiden Street (west side of Portsmouth) =>
-								"00460", // != Baiden Street (east side of Portsmouth)
-								"00464", // Calderwood Drive (east side of Portsmouth)
-								"S02070", // St. Lawrence College Transfer Point =>
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"S02070", // St. Lawrence College Transfer Point <=
 								"00751", // Baiden Street (west side of Portsmouth)
 								"02069", // ==
 								"00300", // ==
@@ -249,6 +246,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00261", // ==
 								"00199", // !=
 								"00203", // <>
+								"00746", // <>
+								"S09056", // <>
+								"09068", // <>
 								"02018", // <>
 								"00200", // !=
 								"00171", // ==
@@ -365,17 +365,18 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						"S02079", // Cataraqui Centre Transfer Point Platform 3
 								"00520", // ==
 								"00751", // != Baiden Street (west side of Portsmouth) =>
-								"00460", // !=
-								"S02070", // St. Lawrence College Transfer Point =>
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"S02070", // St. Lawrence College Transfer Point <=
 								"00751", // Baiden Street (west side of Portsmouth) <=
 								"00521", // ==
+								"00557", // ==
+								"00559", // !=
+								"09007", // !=
+								"S02074", // ==
 								"00097", // ==
-								"S02079", // Cataraqui Centre Transfer Point Platform 3
-								"S02084", // Cataraqui Centre Transfer Point Platform 7
+								"S02079", // != Cataraqui Centre Transfer Point Platform 3 => CONTNUE
+								"S02084", // != Cataraqui Centre Transfer Point Platform 7 => END
 						})) //
 				.compileBothTripSort());
 		map2.put(7L, new RouteTripSpec(7L, //
@@ -531,6 +532,44 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"S02084", // Cataraqui Centre Transfer Point Bay 7
 						})) //
 				.compileBothTripSort());
+		map2.put(15L, new RouteTripSpec(15L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Cataraqui Woods / Ctr", // Cataraqui Ctr / Cataraqui Woods
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Reddendale") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"S09037", // Centre 70 Park and Ride (west side of Days)
+								"00576", // ==
+								"00577", // !=
+								"00578", // ==
+								"00560", // ==
+								"00811", // !=
+								"09007", // !=
+								"S02074", // ==
+								"S00028", // 1386 Waverley Crescent (north side)
+								"00736", // != !=
+								"00097", // xx <>
+								"S02077", // xx != Cataraqui Centre Transfer Point Platform 1 =>
+								"S02081", // xx != Cataraqui Centre Transfer Point Platform 4
+								"00799", // xx
+								"00741", // !=
+								"00651", // != !=
+								"00097", // xx <>
+								"S02081", // xx != Cataraqui Centre Transfer Point Platform 4
+								"00799", // xx
+								"00077", // !=
+								"00742", // Peachwood Street (west side of Birchwood)
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"00742", // Peachwood Street (west side of Birchwood)
+								"00740", // . !=
+								"00097", // <>
+								"S02085", // !=
+								"S00018", // 1385 Waverley Crescent (south side)
+								"S02075", // Gardiners Centre Transfer Point
+								"S09037", // Centre 70 Park and Ride (west side of Days)
+						})) //
+				.compileBothTripSort());
 		map2.put(16L, new RouteTripSpec(16L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, "Train Sta", //
 				1, MTrip.HEADSIGN_TYPE_STRING, "Division / Dalton") // Bus Terminal
@@ -539,13 +578,13 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						"00728", // Dalton Avenue (east side of Grant Timmins)
 								"00832", // ==
 								"00216", // != <>
+								"00051", // != <>
 								"00690", // != <>
-								"S02014", // != <> Bus Terminal Transfer Point =>
-								"S00052", // != <> Bus Terminal Transfer Point =>
+								"S02014", // != <> Bus Terminal Transfer Point Platform 2 =>
+								"S00052", // != <> Bus Terminal Transfer Point Platform 3 =>
 								"00217", // !=
-								"S09074", // Bus Terminal Transfer Point
+								"S09074", // Bus Terminal Transfer Point Platform 4
 								"02021", // ==
-								"S02007", // != Bus Terminal Transfer Point
 								"00237", // !=
 								"S00396", // Train Station Transfer Point =>
 						})) //
@@ -556,10 +595,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00216", // <>
 								"00051", // <>
 								"00690", // <> ==
-								"00217", // != <>
-								"S09074", // != Bus Terminal Transfer Point =>
-								"S00052", // != <> Bus Terminal Transfer Point =>
-								"S02014", // <> != Bus Terminal Transfer Point
+								"S00052", // != <> Bus Terminal Transfer Point Platform 3 =>
+								"S02014", // <> != Bus Terminal Transfer Point Platform 2
 								"00218", // !=
 								"00728", // Dalton Avenue (east side of Grant Timmins)
 						})) //
@@ -617,13 +654,17 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00472", // Van Order Drive (north side of Norman Rogers)
 						})) //
 				.compileBothTripSort());
-		map2.put(20l, new RouteTripSpec(20l, //
+		map2.put(20L, new RouteTripSpec(20L, //
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, MAIN_CAMPUS, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, WEST_CAMPUS) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
-						Arrays.asList(new String[] { "S02009", "S00417", "S02042" })) //
+						Arrays.asList(new String[] { //
+						"S02009", "S00417", "S02042" //
+						})) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
-						Arrays.asList(new String[] { "S02042", "S00411", "S02009" })) //
+						Arrays.asList(new String[] { //
+						"S02042", "S00411", "S02009" //
+						})) //
 				.compileBothTripSort());
 		map2.put(501L, new RouteTripSpec(501L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
@@ -632,11 +673,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"S02077", // Cataraqui Centre Transfer Point Platform 1
 								"S09042", // Kingston Centre (south side of Princess)
-								"S02039", // Bagot Street (west side) north of Brock Street
+								"S00356", // ==
+								"09212", // !=
+								"S00272", // !=
+								"S02039", // == Downtown Transfer Point Platform 4
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"S02039", // Bagot Street (west side) north of Brock Street
+						"S02039", // Downtown Transfer Point Platform 4
 								"S02003", // Bayridge Centre (east side of Bayridge)
 								"S02077", // Cataraqui Centre Transfer Point Platform 1
 						})) //
@@ -691,20 +735,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
-		}
-		if (mRoute.getId() == 15L && gTrip.getDirectionId() == null) {
-			if ("Reddendale".equals(gTrip.getTripHeadsign()) //
-					|| "Kingston Centre".equals(gTrip.getTripHeadsign())) {
-				mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
-				return;
-			} else if ("Cataraqui Centre".equals(gTrip.getTripHeadsign()) //
-					|| "Cataraqui Centre/Cataraqui Woods".equals(gTrip.getTripHeadsign())) {
-				mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
-				return;
-			}
-			System.out.printf("\nUnexpected trip head sign for %s!\n", gTrip);
-			System.exit(-1);
-			return;
 		}
 		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), gTrip.getDirectionId() == null ? 0 : gTrip.getDirectionId());
 	}
