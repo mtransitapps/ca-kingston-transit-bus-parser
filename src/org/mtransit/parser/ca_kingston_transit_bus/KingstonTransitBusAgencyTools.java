@@ -73,6 +73,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean excludeTrip(GTrip gTrip) {
+		if (gTrip.getTripHeadsign().toLowerCase(Locale.ENGLISH).contains("not in service")) {
+			return true; // exclude
+		}
 		if (this.serviceIds != null) {
 			return excludeUselessTrip(gTrip, this.serviceIds);
 		}
@@ -235,9 +238,12 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"02030", // == Rideaucrest Home (west side of Rideau)
 								"00459", // == Portsmouth Avenue (north side of King)
 								"00751", // != Baiden Street (west side of Portsmouth) =>
+								"00460", // !=
+								"S02070", // St. Lawrence College Transfer Point
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
+						"S02070", // St. Lawrence College Transfer Point
 								"00751", // Baiden Street (west side of Portsmouth)
 								"02069", // ==
 								"00300", // ==
@@ -365,9 +371,12 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						"S02079", // Cataraqui Centre Transfer Point Platform 3
 								"00520", // ==
 								"00751", // != Baiden Street (west side of Portsmouth) =>
+								"00460", // !=
+								"S02070", // St. Lawrence College Transfer Point
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
+						"S02070", // St. Lawrence College Transfer Point
 								"00751", // Baiden Street (west side of Portsmouth) <=
 								"00521", // ==
 								"00557", // ==
@@ -681,6 +690,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S02039", // Downtown Transfer Point Platform 4
+								"S00411", // ==
+								"00412", // !=
+								"S09040", // !=
+								"S09038", // ==
 								"S02003", // Bayridge Centre (east side of Bayridge)
 								"S02077", // Cataraqui Centre Transfer Point Platform 1
 						})) //
