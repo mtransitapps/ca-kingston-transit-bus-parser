@@ -101,16 +101,32 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	private static final String ROUTE_12A_RSN = "12A";
 
+	private static final long RID_ENDS_WITH_A = 1_000L;
+	private static final long RID_ENDS_WITH_D = 4_000L;
+	private static final long RID_ENDS_WITH_P = 16_000L;
+	private static final long RID_ENDS_WITH_Q = 17_000L;
+	private static final long RID_ENDS_WITH_W = 23_000L;
+
 	@Override
 	public long getRouteId(GRoute gRoute) {
 		if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
 			return Long.parseLong(gRoute.getRouteShortName());
 		}
-		if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
-			return 1012L;
-		}
-		if ("18Q".equals(gRoute.getRouteShortName())) {
-			return 17018L;
+		Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
+		if (matcher.find()) {
+			int digits = Integer.parseInt(matcher.group());
+			String rsn = gRoute.getRouteShortName().toLowerCase(Locale.ENGLISH);
+			if (rsn.endsWith("a")) {
+				return digits + RID_ENDS_WITH_A;
+			} else if (rsn.endsWith("d")) {
+				return digits + RID_ENDS_WITH_D;
+			} else if (rsn.endsWith("p")) {
+				return digits + RID_ENDS_WITH_P;
+			} else if (rsn.endsWith("q")) {
+				return digits + RID_ENDS_WITH_Q;
+			} else if (rsn.endsWith("w")) {
+				return digits + RID_ENDS_WITH_W;
+			}
 		}
 		if ("COV".equals(gRoute.getRouteShortName())) {
 			return 99001L;
@@ -121,30 +137,33 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	private static final String ROUTE_1 = "St Lawrence College - Montreal St";
-	private static final String ROUTE_2 = "Kingston Centre - Division St";
-	private static final String ROUTE_3 = "Kingston Centre - Downtown Transfer Point";
-	private static final String ROUTE_4 = "Downtown Transfer Point - Cataraqui Centre";
-	private static final String ROUTE_6 = "St Lawrence College - Cataraqui Centre";
-	private static final String ROUTE_7 = "INVISTA Centre - Division St / Dalton Ave";
-	private static final String ROUTE_9 = "Brock St / Barrie St - Cataraqui Centre";
-	private static final String ROUTE_10 = "Cataraqui Centre - Amherstview";
-	private static final String ROUTE_11 = "Kingston Centre - Cataraqui Centre";
-	private static final String ROUTE_12 = "Highway 15 - Kingston Centre";
+	private static final String ROUTE_2 = "Kingston Ctr - Division St";
+	private static final String ROUTE_3 = "Kingston Ctr - Downtown Transfer Point";
+	private static final String ROUTE_4 = "Downtown Transfer Point - Cataraqui Ctr";
+	private static final String ROUTE_6 = "St Lawrence College - Cataraqui Ctr";
+	private static final String ROUTE_7 = "INVISTA Ctr - Division St / Dalton Ave";
+	private static final String ROUTE_8 = "Route 8"; // TODO
+	private static final String ROUTE_9 = "Brock St / Barrie St - Cataraqui Ctr";
+	private static final String ROUTE_10 = "Cataraqui Ctr - Amherstview";
+	private static final String ROUTE_11 = "Kingston Ctr - Cataraqui Ctr";
+	private static final String ROUTE_12 = "Highway 15 - Kingston Ctr";
 	private static final String ROUTE_12A = "CFB Kingston - Downtown Transfer Point";
 	private static final String ROUTE_13 = "Downtown - SLC (Extra Bus)"; // not official
 	private static final String ROUTE_14 = "Crossfield Ave / Waterloo Dr";
-	private static final String ROUTE_15 = "Reddendale - Cataraqui Woods / Cataraqui Centre";
+	private static final String ROUTE_15 = "Reddendale - Cataraqui Woods / Cataraqui Ctr";
 	private static final String ROUTE_16 = "Bus Terminal - Train Station";
 	private static final String ROUTE_17 = "Queen's Shuttle / Main Campus - Queen's Shuttle / West Campus";
 	private static final String ROUTE_18 = "Train Station Circuit";
-	private static final String ROUTE_19 = "Queen's / Kingston General Hospital - Montreal St Park & Ride";
-	private static final String ROUTE_20 = "Queen's Shuttle – Isabel / Tett Centres";
-	private static final String ROUTE_501 = "Express (Kingston Centre - Downtown - Kingston Gen. Hospital - St Lawrence College - Cataraqui Centre)";
-	private static final String ROUTE_502 = "Express (St Lawrence College - Kingston Gen. Hospital - Downtown - Kingston Centre - Cataraqui Centre)";
-	private static final String ROUTE_601 = "Innovation Dr Park & Ride – Queen's / KGH";
-	private static final String ROUTE_602 = "Queen's / KGH – Innovation Dr Park & Ride";
-	private static final String ROUTE_701 = "King's Crossing Centre – Cataraqui Centre";
-	private static final String ROUTE_702 = "Cataraqui Centre - King's Crossing Centre";
+	private static final String ROUTE_19 = "Queen's / Kingston General Hospital - Montreal St P&R";
+	private static final String ROUTE_20 = "Queen's Shuttle – Isabel / Tett Ctrs";
+	private static final String ROUTE_501 = "Express (Kingston Ctr - Downtown - Kingston Gen. Hospital - St Lawrence College - Cataraqui Ctr)";
+	private static final String ROUTE_502 = "Express (St Lawrence College - Kingston Gen. Hospital - Downtown - Kingston Ctr - Cataraqui Ctr)";
+	private static final String ROUTE_601 = "Innovation Dr P&R – Queen's / KGH";
+	private static final String ROUTE_602 = "Queen's / KGH – Innovation Dr P&R";
+	private static final String ROUTE_701 = "King's Crossing Ctr – Cataraqui Ctr";
+	private static final String ROUTE_702 = "Cataraqui Ctr - King's Crossing Ctr";
+	private static final String ROUTE_801 = "Montreal St. P&R - Queen's/Kingston Gen. Hospital";
+	private static final String ROUTE_802 = "Queen's/Kingston Gen. Hospital - Montreal St. P&R";
 
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
@@ -169,6 +188,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				case 4: return ROUTE_4;
 				case 6: return ROUTE_6;
 				case 7: return ROUTE_7;
+				case 8: return ROUTE_8;
 				case 9: return ROUTE_9;
 				case 10: return ROUTE_10;
 				case 11: return ROUTE_11;
@@ -187,11 +207,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				case 602: return ROUTE_602;
 				case 701: return ROUTE_701;
 				case 702: return ROUTE_702;
+				case 801: return ROUTE_801;
+				case 802: return ROUTE_802;
 				// @formatter:on
 				}
-			}
-			if (isGoodEnoughAccepted()) {
-				return "Route " + gRoute.getRouteShortName();
 			}
 			System.out.printf("\nUnexpected route long name '%s'!", gRoute);
 			System.exit(-1);
@@ -615,7 +634,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00728", // Dalton Avenue (east side of Grant Timmins)
 						})) //
 				.compileBothTripSort());
-		map2.put(17l, new RouteTripSpec(17l, //
+		map2.put(17L, new RouteTripSpec(17L, //
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, MAIN_CAMPUS, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, WEST_CAMPUS) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
@@ -673,11 +692,15 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, WEST_CAMPUS) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
 						Arrays.asList(new String[] { //
-						"S02009", "S00417", "S02042" //
+						"S02009", // Queen's West Campus (south side of Union)
+								"00433", // Albert Street (south side of Union)
+								"S00357", // Albert Street (north side of Princess)
 						})) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
 						Arrays.asList(new String[] { //
-						"S02042", "S00411", "S02009" //
+						"S00356", // Albert Street (south side of Princess)
+								"S02042", // Alfred Street (north side of Union)
+								"S00444", // Queen's West Campus (north side of Union)
 						})) //
 				.compileBothTripSort());
 		map2.put(501L, new RouteTripSpec(501L, //
@@ -776,7 +799,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
 		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
-		if (mTrip.getRouteId() == 15l) {
+		if (mTrip.getRouteId() == 15L) {
 			if (Arrays.asList( //
 					"Kingston Ctr", //
 					"Reddendale"//
@@ -788,6 +811,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 					"Cataraqui Ctr / Cataraqui Woods"//
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Cataraqui Ctr", mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 17L + RID_ENDS_WITH_W) { // 17W
+			if (Arrays.asList( //
+					"Queen's Main Campus",//
+					"Queen's West Campus" //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Queen's West Campus", mTrip.getHeadsignId());
 				return true;
 			}
 		}
