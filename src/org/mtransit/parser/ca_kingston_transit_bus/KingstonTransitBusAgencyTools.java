@@ -129,7 +129,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			}
 		}
 		if ("COV".equals(gRoute.getRouteShortName())) {
-			return 99001L;
+			return 99_001L;
 		}
 		System.out.printf("\nUnexpected route ID for '%s'!\n", gRoute);
 		System.exit(-1);
@@ -247,42 +247,31 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"00150", // != Joyce Street (north side of Guthrie) <=
-								"00154", // Sutherland Drive (west side of Virginia)
-								"00168", // !=
-								"00172", // ==
 								"00201", // !=
 								"00203", // <>
-								"00746", // <>
-								"S09056", // <>
-								"09068", // <>
 								"02018", // <>
 								"00202", // !=
 								"00254", // == Charles Street (west side of Montreal)
-								"09097", // != Raglan Road (west side of Montreal)
-								"02030", // == Rideaucrest Home (west side of Rideau)
-								"00459", // == Portsmouth Avenue (north side of King)
-								"00751", // != Baiden Street (west side of Portsmouth) =>
-								"00460", // !=
+								"S00427", // ==
+								"09101", // !=
+								"00428", // !=
+								"S00430", // !=
+								"S02042", // ==
 								"S02070", // St. Lawrence College Transfer Point
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S02070", // St. Lawrence College Transfer Point
-								"00751", // Baiden Street (west side of Portsmouth)
-								"02069", // ==
-								"00300", // ==
-								"S02040", // ==
-								"09093", // !=
-								"00261", // ==
+								"00433", // ==
+								"09099", // !=
+								"09100", // !=
+								"S00431", // !=
+								"00429", // !=
+								"S00426", // ==
 								"00199", // !=
 								"00203", // <>
-								"00746", // <>
-								"S09056", // <>
-								"09068", // <>
 								"02018", // <>
 								"00200", // !=
-								"00171", // ==
-								"00146", // !=
 								"00150", // != Joyce Street (north side of Guthrie =>
 						})) //
 				.compileBothTripSort());
@@ -291,44 +280,29 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				1, MTrip.HEADSIGN_TYPE_STRING, "Division St") //
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
-						"Smspr1", // != Montreal Street Park and Ride <=
-								"00150", // Joyce Street (north side of Guthrie) <=
-								"00145", // ==
-								"00168", // ++
-								"09076", // ++
-								"00459", // == Portsmouth Avenue (north side of King)
-								"00460", // != != Baiden Street (east side of Portsmouth)
-								"00464", // != <> Calderwood Drive (east side of Portsmouth)
-								"S02070", // != <> St. Lawrence College Transfer Point
-								"00463", // != != Churchill Street (east side of Portsmouth)
-								"00461", // == Cartwright Street (south side of Churchill)
-								"S00451", // ==
-								"00855", // !=
-								"09087", // !=
-								"00450", // ==
+						"00150", // Joyce Street (north side of Guthrie) <=
+								"S00427", // ==
+								"09101", // !=
+								"00428", // !=
+								"S00430", // !=
+								"S02042", // ==
 								"S00502", // Kingston Centre Transfer Point Platform 4
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S00502", // Kingston Centre Transfer Point Platform 4
-								"00449", // ==
-								"09086", // !=
-								"00454", // !=
-								"S00800", // ==
-								"00452", // ==
-								"00464", // != !=
-								"00464", // != <> Calderwood Drive (east side of Portsmouth)
-								"S02070", // != <>
-								"00751", // == !=
+								"00433", // ==
+								"09099", // !=
+								"09100", // !=
+								"S00431", // !=
+								"00429", // !=
+								"S00426", // ==
 								"S02036", // == Downtown Transfer Point Platform 2
-								"03020", // != Barrie Street (north side of Queen)
 								"00294", // != Clergy Street (north side of Brock)
-								"00273", // != Princess Street (east side of Division)
-								"00279", // == Colborne Street (east side of Division)
-								"00142", // ==
+								"03020", // != Barrie Street (north side of Queen)
+								"00279", // != Colborne Street (east side of Division)
+								"00284", // ==
 								"00150", // != Joyce Street (north side of Guthrie) =>
-								"00144", // !=
-								"Smspr1", // Montreal Street Park and Ride =>
 						})) //
 				.compileBothTripSort());
 		map2.put(3L, new RouteTripSpec(3L, //
@@ -578,6 +552,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"00811", // !=
 								"09007", // !=
 								"S02074", // ==
+								"00015", // Edwin Street (west side of Waverley)
 								"S00028", // 1386 Waverley Crescent (north side)
 								"00736", // != !=
 								"00097", // xx <>
