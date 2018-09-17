@@ -677,7 +677,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						"S00356", // Albert Street (south side of Princess)
 								"09070", // ++
 								"S02042", // ++ Alfred Street (north side of Union)
+								"00441", // Pembroke Street (north side of Union)
 								"S00444", // Queen's West Campus (north side of Union)
+								"03025", // ++
 								"00455", // Yonge Street (south side of Union)
 								"S02009", // Queen's West Campus (south side of Union)
 						})) //
