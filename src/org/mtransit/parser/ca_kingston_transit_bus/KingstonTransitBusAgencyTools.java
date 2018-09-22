@@ -425,12 +425,15 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						"S02070", // St. Lawrence College Transfer Point
 								"00300", // ==
 								"S02039", // != Downtown Transfer Point Platform 4 =>
-								"S02037", // != Downtown Transfer Point Platform 3 =>
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S02039", // Downtown Transfer Point Platform 4
-								"00107", // ++
+								"S00427", // ==
+								"09101", // !=
+								"00428", // !=
+								"S00430", // !=
+								"S02042", // ==
 								"S02070", // St. Lawrence College Transfer Point
 						})) //
 				.compileBothTripSort());
