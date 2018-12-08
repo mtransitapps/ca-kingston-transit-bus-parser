@@ -10,11 +10,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.Pair;
 import org.mtransit.parser.SplitUtils;
-import org.mtransit.parser.Utils;
 import org.mtransit.parser.SplitUtils.RouteTripSpec;
+import org.mtransit.parser.Utils;
 import org.mtransit.parser.gtfs.data.GCalendar;
 import org.mtransit.parser.gtfs.data.GCalendarDate;
 import org.mtransit.parser.gtfs.data.GRoute;
@@ -25,9 +26,8 @@ import org.mtransit.parser.gtfs.data.GTripStop;
 import org.mtransit.parser.mt.data.MAgency;
 import org.mtransit.parser.mt.data.MDirectionType;
 import org.mtransit.parser.mt.data.MRoute;
-import org.mtransit.parser.mt.data.MTripStop;
-import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.mt.data.MTrip;
+import org.mtransit.parser.mt.data.MTripStop;
 
 // https://openkingston.cityofkingston.ca/explore/dataset/transit-gtfs-routes/
 // https://opendatakingston.cityofkingston.ca/explore/dataset/transit-gtfs-stops/
@@ -273,36 +273,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"02018", // <>
 								"00200", // !=
 								"00150", // != Joyce Street (north side of Guthrie =>
-						})) //
-				.compileBothTripSort());
-		map2.put(2L, new RouteTripSpec(2L, //
-				0, MTrip.HEADSIGN_TYPE_STRING, "Kingston Ctr", //
-				1, MTrip.HEADSIGN_TYPE_STRING, "Division St") //
-				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"00150", // Joyce Street (north side of Guthrie) <=
-								"S00427", // ==
-								"09101", // !=
-								"00428", // !=
-								"S00430", // !=
-								"S02042", // ==
-								"S00502", // Kingston Centre Transfer Point Platform 4
-						})) //
-				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"S00502", // Kingston Centre Transfer Point Platform 4
-								"00433", // ==
-								"09099", // !=
-								"09100", // !=
-								"S00431", // !=
-								"00429", // !=
-								"S00426", // ==
-								"S02036", // == Downtown Transfer Point Platform 2
-								"00294", // != Clergy Street (north side of Brock)
-								"03020", // != Barrie Street (north side of Queen)
-								"00279", // != Colborne Street (east side of Division)
-								"00284", // ==
-								"00150", // != Joyce Street (north side of Guthrie) =>
 						})) //
 				.compileBothTripSort());
 		map2.put(3L, new RouteTripSpec(3L, //
@@ -638,7 +608,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"S02070", // != St. Lawrence College Transfer Point <=
-								"00463", // != Churchill Street (east side of Portsmouth) <=
 								"00464", // == xx
 								"00465", // == !=
 								"00374", // ++
@@ -648,9 +617,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"S00396", // Train Station Transfer Point
 								"S02007", // Bus Terminal Transfer Point Platform 1
-								"S02039", // Downtown Transfer Point Platform 4
+								"00283", // == York Street (west side of Division)
+								"00280", // !== Colborne Street (west side of Division)
+								"S00272", // != Barrie Street (south side of Princess)
+								"09082", // !== 270 Princess Street (south side)
+								"03024", // !== Barrie Street (south side of Queen)
+								"03005", // !== Montreal Street (south side of Queen)
+								"S02039", // == Downtown Transfer Point Platform 4
 								"00459", // ==
-								"00463", // != Churchill Street (east side of Portsmouth) =>
 								"00460", // !=
 								"00464", // != xx
 								"S02070", // != St. Lawrence College Transfer Point =>
@@ -768,6 +742,22 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
+		}
+		if (mRoute.getId() == 2L) {
+			if (gTrip.getDirectionId() == null) {
+				if (Arrays.asList( //
+						"Kingston Centre" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+					return;
+				}
+				if (Arrays.asList( //
+						"Division Street" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+					return;
+				}
+			}
 		}
 		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), gTrip.getDirectionId() == null ? 0 : gTrip.getDirectionId());
 	}
