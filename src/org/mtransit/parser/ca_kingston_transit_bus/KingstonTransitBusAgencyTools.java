@@ -709,6 +709,22 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"S02078", // Cataraqui Centre Transfer Point Platform 2
 						})) //
 				.compileBothTripSort());
+		map2.put(601L, new RouteTripSpec(601L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Queen's / KGH", //
+				1, MTrip.HEADSIGN_TYPE_STRING, StringUtils.EMPTY) //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"00683", // Innovation Drive at Highway 15 (south side)
+								"S02080", // Innovation Drive at Highway 15 (north side)
+								"S02041", // Downtown Transfer Point Platform 7
+								"09201", // Union Street (west side of University) {44.2283264547587,-76.4956589788199}
+								"S00426", // Kingston General Hospital (south side of Stuart)
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						/** no stops */
+						})) //
+				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
 	}
 
