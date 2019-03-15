@@ -109,13 +109,17 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public long getRouteId(GRoute gRoute) {
-		if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
-			return Long.parseLong(gRoute.getRouteShortName());
+		String routeShortName = gRoute.getRouteShortName();
+		if (StringUtils.isEmpty(routeShortName)) {
+			routeShortName = gRoute.getRouteId();
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
+		if (Utils.isDigitsOnly(routeShortName)) {
+			return Long.parseLong(routeShortName);
+		}
+		Matcher matcher = DIGITS.matcher(routeShortName);
 		if (matcher.find()) {
 			int digits = Integer.parseInt(matcher.group());
-			String rsn = gRoute.getRouteShortName().toLowerCase(Locale.ENGLISH);
+			String rsn = routeShortName.toLowerCase(Locale.ENGLISH);
 			if (rsn.endsWith("a")) {
 				return digits + RID_ENDS_WITH_A;
 			} else if (rsn.endsWith("d")) {
@@ -128,7 +132,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				return digits + RID_ENDS_WITH_W;
 			}
 		}
-		if ("COV".equals(gRoute.getRouteShortName())) {
+		if ("COV".equals(routeShortName)) {
 			return 99_001L;
 		}
 		System.out.printf("\nUnexpected route ID for '%s'!\n", gRoute);
