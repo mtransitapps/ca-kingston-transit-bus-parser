@@ -430,6 +430,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S02084", // Cataraqui Centre Transfer Point Platform 7
+								"00866", // ==
+								"00867", // !=
+								"09104", // !=
+								"00868", // ==
 								"S09088", // Speers Boulevard (north side of Kildare)
 						})) //
 				.compileBothTripSort());
