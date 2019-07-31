@@ -588,6 +588,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"S00396", // Train Station Transfer Point
+								"00761", // ==
+								"S00503", // !=
+								"S00506", // !=
+								"02052", // ==
 								"09229", // !=
 								"00216", // <>
 								"00051", // <>
@@ -723,9 +727,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"00683", // Innovation Drive at Highway 15 (south side)
+								"00814", // 695 Innovation Drive (south side)
 								"S02080", // Innovation Drive at Highway 15 (north side)
 								"S02041", // Downtown Transfer Point Platform 7
-								"09201", // Union Street (west side of University) {44.2283264547587,-76.4956589788199}
+								"09201", // Union Street (west side of University)
 								"S00426", // Kingston General Hospital (south side of Stuart)
 						})) //
 				.addTripSort(1, //
@@ -825,6 +830,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 					"Queen's West Campus" //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Queen's West Campus", mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 702L) {
+			if (Arrays.asList( //
+					"Downtown", //
+					"King's Xing"//
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("King's Xing", mTrip.getHeadsignId());
 				return true;
 			}
 		}
