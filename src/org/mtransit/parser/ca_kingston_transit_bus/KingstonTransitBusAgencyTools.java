@@ -826,6 +826,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 17L + RID_ENDS_WITH_W) { // 17W
 			if (Arrays.asList( //
+					StringUtils.EMPTY, //
 					"Queen's Main Campus",//
 					"Queen's West Campus" //
 			).containsAll(headsignsValues)) {
