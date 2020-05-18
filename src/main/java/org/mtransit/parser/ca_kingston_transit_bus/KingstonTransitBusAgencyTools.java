@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.DefaultAgencyTools;
+import org.mtransit.parser.MTLog;
 import org.mtransit.parser.Pair;
 import org.mtransit.parser.SplitUtils;
 import org.mtransit.parser.SplitUtils.RouteTripSpec;
@@ -48,11 +49,11 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void start(String[] args) {
-		System.out.printf("\nGenerating Kingston Transit bus data...");
+		MTLog.log("Generating Kingston Transit bus data...");
 		long start = System.currentTimeMillis();
-		this.serviceIds = extractUsefulServiceIds(args, this);
+		this.serviceIds = extractUsefulServiceIds(args, this, true);
 		super.start(args);
-		System.out.printf("\nGenerating Kingston Transit bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+		MTLog.log("Generating Kingston Transit bus data... DONE in %s.", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	@Override
@@ -135,9 +136,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		if ("COV".equals(routeShortName)) {
 			return 99_001L;
 		}
-		System.out.printf("\nUnexpected route ID for '%s'!\n", gRoute);
-		System.exit(-1);
-		return -1L;
+		throw new MTLog.Fatal("Unexpected route ID for '%s'!", gRoute);
 	}
 
 	private static final String ROUTE_1 = "St Lawrence College - Montreal St";
@@ -216,18 +215,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				// @formatter:on
 				}
 			}
-			System.out.printf("\nUnexpected route long name '%s'!", gRoute);
-			System.exit(-1);
-			return null;
+			throw new MTLog.Fatal("Unexpected route long name '%s'!", gRoute);
 		}
 		return super.getRouteLongName(gRoute);
 	}
 
 	@Override
 	public boolean mergeRouteLongName(MRoute mRoute, MRoute mRouteToMerge) {
-		System.out.printf("\nUnexpected routes to merge: %s & %s!\n", mRoute, mRouteToMerge);
-		System.exit(-1);
-		return false;
+		throw new MTLog.Fatal("Unexpected routes to merge: %s & %s!", mRoute, mRouteToMerge);
 	}
 
 	private static final String AGENCY_COLOR = "009BC9";
@@ -256,6 +251,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 								"02018", // <>
 								"00202", // !=
 								"00254", // == Charles Street (west side of Montreal)
+								"S02039", // Downtown Transfer Point Platform 4
 								"S00427", // ==
 								"09101", // !=
 								"00428", // !=
@@ -765,12 +761,42 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return super.splitTripStop(mRoute, gTrip, gTripStop, splitTrips, routeGTFS);
 	}
 
-	private static final String VIA = " via ";
-
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
+		}
+		if (mRoute.getId() == 1L + RID_ENDS_WITH_A) { // 1A
+			if (gTrip.getDirectionId() == null) {
+				if (Arrays.asList( //
+						"Downtown" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+					return;
+				}
+				if (Arrays.asList( //
+						"Montreal Street" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 3L + RID_ENDS_WITH_A) { // 3A
+			if (gTrip.getDirectionId() == null) {
+				if (Arrays.asList( //
+						"Downtown via KGH" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+					return;
+				}
+				if (Arrays.asList( //
+						"Kingston Centre" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+					return;
+				}
+			}
 		}
 		if (mRoute.getId() == 2L) {
 			if (gTrip.getDirectionId() == null) {
@@ -795,11 +821,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String cleanTripHeadsign(String tripHeadsign) {
-		int indexOfVIA = tripHeadsign.toLowerCase(Locale.ENGLISH).indexOf(VIA);
-		if (indexOfVIA >= 0) {
-			tripHeadsign = tripHeadsign.substring(0, indexOfVIA);
-		}
 		tripHeadsign = STARTS_WITH_EXPRESS.matcher(tripHeadsign).replaceAll(StringUtils.EMPTY);
+		tripHeadsign = CleanUtils.keepToAndRemoveVia(tripHeadsign);
 		tripHeadsign = CleanUtils.SAINT.matcher(tripHeadsign).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		tripHeadsign = CleanUtils.removePoints(tripHeadsign);
 		tripHeadsign = CleanUtils.cleanSlashes(tripHeadsign);
@@ -833,6 +856,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString("Queen's West Campus", mTrip.getHeadsignId());
 				return true;
 			}
+		} else if (mTrip.getRouteId() == 602L) {
+			if (Arrays.asList( //
+					"Downtown", //
+					"Innovation Dr"//
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Innovation Dr", mTrip.getHeadsignId());
+				return true;
+			}
 		} else if (mTrip.getRouteId() == 702L) {
 			if (Arrays.asList( //
 					"Downtown", //
@@ -842,9 +873,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			}
 		}
-		System.out.printf("\nUnexpected trips to merge: %s & %s!\n", mTrip, mTripToMerge);
-		System.exit(-1);
-		return false;
+		throw new MTLog.Fatal("Unexpected trips to merge: %s & %s!", mTrip, mTripToMerge);
 	}
 
 	private static final Pattern SIDE = Pattern.compile("((^|\\W){1}(side)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
@@ -921,18 +950,11 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				if (stopId.startsWith("S")) {
 					return 190000 + digits;
 				}
-				System.out.printf("\nUnexpected stop ID for '%s'!\n", gStop);
-				System.exit(-1);
-				return digits;
+				throw new MTLog.Fatal("Unexpected stop ID for '%s'!", gStop);
 			}
 		} catch (Exception e) {
-			System.out.printf("\nError while finding stop ID for '%s'!\n", gStop);
-			e.printStackTrace();
-			System.exit(-1);
-			return -1;
+			throw new MTLog.Fatal(e, "Error while finding stop ID for '%s'!", gStop);
 		}
-		System.out.printf("\nUnexpected stop ID for '%s'!\n", gStop);
-		System.exit(-1);
-		return -1;
+		throw new MTLog.Fatal("Unexpected stop ID for '%s'!", gStop);
 	}
 }
