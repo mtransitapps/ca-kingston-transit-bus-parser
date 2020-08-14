@@ -393,6 +393,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			}
 			if (mRoute.getId() == 7L) {
 				if (Arrays.asList( // Rideau Hts
+						"Bus Terminal via John Counter Blvd", //
 						"Rideau Heights via John Counter Blvd" //
 				).contains(gTrip.getTripHeadsign())) {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
@@ -400,6 +401,20 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				}
 				if (Arrays.asList( // Invista Ctr
 						"Invista Centre via John Counter Blvd" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+					return;
+				}
+			}
+			if (mRoute.getId() == 8L) {
+				if (Arrays.asList( // Downtown
+						"Extra Bus - Downtown via Queen's" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+					return;
+				}
+				if (Arrays.asList( // SLC
+						"Extra Bus - SLC via Queen's" //
 				).contains(gTrip.getTripHeadsign())) {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
 					return;
@@ -461,6 +476,13 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
 					return;
 				}
+				// NEW
+				if (Arrays.asList( // Kingston Ctr
+						"Kingston Centre" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+					return;
+				}
 			}
 			if (mRoute.getId() == 16L) {
 				if (Arrays.asList( // Train Sta
@@ -507,6 +529,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			}
 			if (mRoute.getId() == 601L) {
 				if (Arrays.asList( // Queen's / KGH
+						"Express - Montreal Street Park & Ride", //
 						"Express - Queen's/KGH via Downtown" //
 				).contains(gTrip.getTripHeadsign())) {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
@@ -547,7 +570,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			}
 			if (mRoute.getId() == 801L) {
 				if (Arrays.asList( // Queen's / KGH
-						"Express - Queen's/KGH via Downtown" //
+						"Express - Queen's/KGH via Downtown", //
+						"Express - Innovation Drive" //
 				).contains(gTrip.getTripHeadsign())) {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
 					return;
@@ -556,6 +580,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			if (mRoute.getId() == 802L) {
 				if (Arrays.asList( // Montreal St P&R
 						"Express - Montreal Street Park & Ride" //
+				).contains(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+					return;
+				}
+			}
+			if (mRoute.getId() == 99_001L) { // COV
+				if (Arrays.asList( // Cataraqui Ctr
+						"Cataraqui Centre" //
 				).contains(gTrip.getTripHeadsign())) {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
 					return;
@@ -593,6 +625,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString("Downtown", mTrip.getHeadsignId());
 				return true;
 			}
+		} else if (mTrip.getRouteId() == 7L) {
+			if (Arrays.asList( //
+					"Bus Terminal", //
+					"Rideau Hts"//
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Rideau Hts", mTrip.getHeadsignId());
+				return true;
+			}
 		} else if (mTrip.getRouteId() == 15L) {
 			if (Arrays.asList( //
 					"Kingston Ctr", //
@@ -624,6 +664,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString("Queen's West Campus", mTrip.getHeadsignId());
 				return true;
 			}
+		} else if (mTrip.getRouteId() == 601L) {
+			if (Arrays.asList( //
+					"Montreal St Pk & Ride", //
+					"Queen's / KGH"//
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Queen's / KGH", mTrip.getHeadsignId());
+				return true;
+			}
 		} else if (mTrip.getRouteId() == 602L) {
 			if (Arrays.asList( //
 					"Downtown", //
@@ -638,6 +686,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 					"King's Xing"//
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("King's Xing", mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 801L) {
+			if (Arrays.asList( //
+					"Queen's / KGH", //
+					"Innovation Dr" //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Innovation Dr", mTrip.getHeadsignId());
 				return true;
 			}
 		}
