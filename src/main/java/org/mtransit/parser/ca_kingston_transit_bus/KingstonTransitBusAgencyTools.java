@@ -145,7 +145,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String ROUTE_4 = "Downtown Transfer Point - Cataraqui Ctr";
 	private static final String ROUTE_6 = "St Lawrence College - Cataraqui Ctr";
 	private static final String ROUTE_7 = "INVISTA Ctr - Division St / Dalton Ave";
-	private static final String ROUTE_8 = "Route 8"; // TODO
+	private static final String ROUTE_8 = "Downtown - SLC (Extra Bus)"; // not official
 	private static final String ROUTE_9 = "Brock St / Barrie St - Cataraqui Ctr";
 	private static final String ROUTE_10 = "Cataraqui Ctr - Amherstview";
 	private static final String ROUTE_11 = "Kingston Ctr - Cataraqui Ctr";
@@ -602,10 +602,12 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	private static final Pattern STARTS_WITH_EXPRESS = Pattern.compile("(^(express -) )*", Pattern.CASE_INSENSITIVE);
+	private static final Pattern STARTS_WITH_EXTRA_BUS = Pattern.compile("(^(extra bus -) )*", Pattern.CASE_INSENSITIVE);
 
 	@Override
 	public String cleanTripHeadsign(String tripHeadsign) {
 		tripHeadsign = STARTS_WITH_EXPRESS.matcher(tripHeadsign).replaceAll(StringUtils.EMPTY);
+		tripHeadsign = STARTS_WITH_EXTRA_BUS.matcher(tripHeadsign).replaceAll(StringUtils.EMPTY);
 		tripHeadsign = CleanUtils.keepToAndRemoveVia(tripHeadsign);
 		tripHeadsign = CleanUtils.SAINT.matcher(tripHeadsign).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		tripHeadsign = CleanUtils.removePoints(tripHeadsign);
