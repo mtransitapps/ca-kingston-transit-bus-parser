@@ -414,6 +414,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 					return;
 				}
 				if (Arrays.asList( // SLC
+						"Queen's University", //
 						"Extra Bus - SLC via Queen's" //
 				).contains(gTrip.getTripHeadsign())) {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
@@ -633,6 +634,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 					"Rideau Hts"//
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Rideau Hts", mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 8L) {
+			if (Arrays.asList( //
+					"Queen's University", //
+					"SLC"//
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("SLC", mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 15L) {
