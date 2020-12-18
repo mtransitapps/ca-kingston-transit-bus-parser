@@ -89,11 +89,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public boolean excludeRoute(GRoute gRoute) {
-		return super.excludeRoute(gRoute);
-	}
-
-	@Override
 	public Integer getAgencyRouteType() {
 		return MAgency.ROUTE_TYPE_BUS;
 	}
@@ -234,29 +229,27 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	private static final String KINGSTON_GOSPEL_TEMPLE = "Kingston Gospel Temple";
 	private static final String CATARAQUI_CTR_TRANSFER_PT = "Cataraqui Ctr Transfer Pt";
-	private static final String MAIN_CAMPUS = "Main Campus";
-	private static final String WEST_CAMPUS = "West Campus";
 
-	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
+	private static final HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
-		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
+		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
 		map2.put(14L, new RouteTripSpec(14L, // Waterloo Dr / Crossfield Ave
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, KINGSTON_GOSPEL_TEMPLE, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, CATARAQUI_CTR_TRANSFER_PT) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
-						Arrays.asList(new String[] { //
+						Arrays.asList( //
 						"S02084", // Cataraqui Centre Transfer Point Bay 7
 								"00850", // Centennial Drive
 								"S00399" // Kingston Gospel Temple
-						})) //
+						)) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
-						Arrays.asList(new String[] { //
+						Arrays.asList( //
 						"S00399", // Kingston Gospel Temple
 								"00410", // Centennial Drive
 								"00097", // == Norwest Road
 								"S02079", // Cataraqui Centre Transfer Point Bay 3
-								"S02084", // Cataraqui Centre Transfer Point Bay 7
-						})) //
+								"S02084" // Cataraqui Centre Transfer Point Bay 7
+						)) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
 	}
@@ -508,6 +501,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 					return;
 				}
 				if (Arrays.asList( // Cataraqui Ctr
+						"Express - Cataraqui Ctr via Front/Bayrdg", //
 						"Express - Cataraqui Centre via Front/Bayridge" //
 				).contains(gTrip.getTripHeadsign())) {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
@@ -554,6 +548,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			if (mRoute.getId() == 701L) {
 				if (Arrays.asList( // Cataraqui Ctr
 						"Express - Cataraqui Centre via Brock/Bath", //
+						"Express - Cataraqui Ctr via Brock/Bath", //
 						"Express - Cataraqui Centre via Downtown" //
 				).contains(gTrip.getTripHeadsign())) {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
@@ -597,8 +592,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			throw new MTLog.Fatal("%s: Unexpected trip %s!", mRoute.getId(), gTrip.toStringPlus());
 		}
 		mTrip.setHeadsignString(
-			cleanTripHeadsign(gTrip.getTripHeadsign()),
-			gTrip.getDirectionId() == null ? 0 : gTrip.getDirectionId()
+			cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
+			gTrip.getDirectionIdOrDefault()
 		);
 	}
 
@@ -711,20 +706,20 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		throw new MTLog.Fatal("Unexpected trips to merge: %s & %s!", mTrip, mTripToMerge);
 	}
 
-	private static final Pattern SIDE = Pattern.compile("((^|\\W){1}(side)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
-	private static final String SIDE_REPLACEMENT = "$2$4";
+	private static final Pattern SIDE = Pattern.compile("((^|\\W)(side)(\\W|$))", Pattern.CASE_INSENSITIVE);
+	private static final String SIDE_REPLACEMENT = "$2" + "$4";
 
-	private static final Pattern EAST_ = Pattern.compile("((^|\\W){1}(east)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
-	private static final String EAST_REPLACEMENT = "$2E$4";
+	private static final Pattern EAST_ = Pattern.compile("((^|\\W)(east)(\\W|$))", Pattern.CASE_INSENSITIVE);
+	private static final String EAST_REPLACEMENT = "$2" + "E" + "$4";
 
-	private static final Pattern WEST_ = Pattern.compile("((^|\\W){1}(west)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
-	private static final String WEST_REPLACEMENT = "$2W$4";
+	private static final Pattern WEST_ = Pattern.compile("((^|\\W)(west)(\\W|$))", Pattern.CASE_INSENSITIVE);
+	private static final String WEST_REPLACEMENT = "$2" + "W" + "$4";
 
-	private static final Pattern NORTH_ = Pattern.compile("((^|\\W){1}(north)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
-	private static final String NORTH_REPLACEMENT = "$2N$4";
+	private static final Pattern NORTH_ = Pattern.compile("((^|\\W)(north)(\\W|$))", Pattern.CASE_INSENSITIVE);
+	private static final String NORTH_REPLACEMENT = "$2" + "N" + "$4";
 
-	private static final Pattern SOUTH_ = Pattern.compile("((^|\\W){1}(south)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
-	private static final String SOUTH_REPLACEMENT = "$2S$4";
+	private static final Pattern SOUTH_ = Pattern.compile("((^|\\W)(south)(\\W|$))", Pattern.CASE_INSENSITIVE);
+	private static final String SOUTH_REPLACEMENT = "$2" + "S" + "$4";
 
 	@Override
 	public String cleanStopName(String gStopName) {
@@ -757,8 +752,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public int getStopId(GStop gStop) {
 		String stopId = gStop.getStopId();
-		if (stopId != null && stopId.length() > 0 && Utils.isDigitsOnly(stopId)) {
-			return Integer.valueOf(stopId); // using stop code as stop ID
+		if (stopId.length() > 0 && Utils.isDigitsOnly(stopId)) {
+			return Integer.parseInt(stopId); // using stop code as stop ID
 		}
 		if (PLACE_CATC.equals(stopId)) {
 			return 900000;
