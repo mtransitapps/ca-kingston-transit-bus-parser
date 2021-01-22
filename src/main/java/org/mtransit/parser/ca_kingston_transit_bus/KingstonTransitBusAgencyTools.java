@@ -625,7 +625,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 7L) {
 			if (Arrays.asList( //
-					"Bus Terminal", //
+					"Bus Term", //
 					"Rideau Hts"//
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Rideau Hts", mTrip.getHeadsignId());
@@ -655,7 +655,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 16L) {
 			if (Arrays.asList( //
-					"Bus Terminal", //
+					"Bus Term", //
 					"Train Sta" //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Train Sta", mTrip.getHeadsignId());
@@ -709,25 +709,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern SIDE = Pattern.compile("((^|\\W)(side)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String SIDE_REPLACEMENT = "$2" + "$4";
 
-	private static final Pattern EAST_ = Pattern.compile("((^|\\W)(east)(\\W|$))", Pattern.CASE_INSENSITIVE);
-	private static final String EAST_REPLACEMENT = "$2" + "E" + "$4";
-
-	private static final Pattern WEST_ = Pattern.compile("((^|\\W)(west)(\\W|$))", Pattern.CASE_INSENSITIVE);
-	private static final String WEST_REPLACEMENT = "$2" + "W" + "$4";
-
-	private static final Pattern NORTH_ = Pattern.compile("((^|\\W)(north)(\\W|$))", Pattern.CASE_INSENSITIVE);
-	private static final String NORTH_REPLACEMENT = "$2" + "N" + "$4";
-
-	private static final Pattern SOUTH_ = Pattern.compile("((^|\\W)(south)(\\W|$))", Pattern.CASE_INSENSITIVE);
-	private static final String SOUTH_REPLACEMENT = "$2" + "S" + "$4";
+	private static final Pattern PLATFORM_ = CleanUtils.cleanWords("platform");
+	private static final String PLATFORM_REPLACEMENT = " P ";
 
 	@Override
 	public String cleanStopName(String gStopName) {
 		gStopName = SIDE.matcher(gStopName).replaceAll(SIDE_REPLACEMENT);
-		gStopName = EAST_.matcher(gStopName).replaceAll(EAST_REPLACEMENT);
-		gStopName = WEST_.matcher(gStopName).replaceAll(WEST_REPLACEMENT);
-		gStopName = NORTH_.matcher(gStopName).replaceAll(NORTH_REPLACEMENT);
-		gStopName = SOUTH_.matcher(gStopName).replaceAll(SOUTH_REPLACEMENT);
+		gStopName = PLATFORM_.matcher(gStopName).replaceAll(PLATFORM_REPLACEMENT);
+		gStopName = CleanUtils.cleanBounds(gStopName);
 		gStopName = CleanUtils.CLEAN_AT.matcher(gStopName).replaceAll(CleanUtils.CLEAN_AT_REPLACEMENT);
 		gStopName = CleanUtils.CLEAN_AND.matcher(gStopName).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		gStopName = CleanUtils.cleanStreetTypes(gStopName);
