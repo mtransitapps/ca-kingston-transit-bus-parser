@@ -1,21 +1,14 @@
 package org.mtransit.parser.ca_kingston_transit_bus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
 import org.mtransit.parser.Pair;
 import org.mtransit.parser.SplitUtils;
 import org.mtransit.parser.SplitUtils.RouteTripSpec;
+import org.mtransit.parser.StringUtils;
 import org.mtransit.parser.Utils;
 import org.mtransit.parser.gtfs.data.GCalendar;
 import org.mtransit.parser.gtfs.data.GCalendarDate;
@@ -30,12 +23,21 @@ import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 // https://openkingston.cityofkingston.ca/explore/dataset/transit-gtfs-routes/
 // https://opendatakingston.cityofkingston.ca/explore/dataset/transit-gtfs-stops/
 // https://api.cityofkingston.ca/gtfs/gtfs.zip
 public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
-	public static void main(String[] args) {
+	public static void main(@Nullable String[] args) {
 		if (args == null || args.length == 0) {
 			args = new String[3];
 			args[0] = "input/gtfs.zip";
@@ -45,49 +47,52 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		new KingstonTransitBusAgencyTools().start(args);
 	}
 
-	private HashSet<String> serviceIds;
+	@Nullable
+	private HashSet<Integer> serviceIdInts;
 
 	@Override
-	public void start(String[] args) {
+	public void start(@NotNull String[] args) {
 		MTLog.log("Generating Kingston Transit bus data...");
 		long start = System.currentTimeMillis();
-		this.serviceIds = extractUsefulServiceIds(args, this, true);
+		this.serviceIdInts = extractUsefulServiceIdInts(args, this, true);
 		super.start(args);
 		MTLog.log("Generating Kingston Transit bus data... DONE in %s.", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	@Override
 	public boolean excludingAll() {
-		return this.serviceIds != null && this.serviceIds.isEmpty();
+		return this.serviceIdInts != null && this.serviceIdInts.isEmpty();
 	}
 
 	@Override
-	public boolean excludeCalendar(GCalendar gCalendar) {
-		if (this.serviceIds != null) {
-			return excludeUselessCalendar(gCalendar, this.serviceIds);
+	public boolean excludeCalendar(@NotNull GCalendar gCalendar) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessCalendarInt(gCalendar, this.serviceIdInts);
 		}
 		return super.excludeCalendar(gCalendar);
 	}
 
 	@Override
-	public boolean excludeCalendarDate(GCalendarDate gCalendarDates) {
-		if (this.serviceIds != null) {
-			return excludeUselessCalendarDate(gCalendarDates, this.serviceIds);
+	public boolean excludeCalendarDate(@NotNull GCalendarDate gCalendarDates) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessCalendarDateInt(gCalendarDates, this.serviceIdInts);
 		}
 		return super.excludeCalendarDate(gCalendarDates);
 	}
 
 	@Override
-	public boolean excludeTrip(GTrip gTrip) {
-		if (gTrip.getTripHeadsign().toLowerCase(Locale.ENGLISH).contains("not in service")) {
+	public boolean excludeTrip(@NotNull GTrip gTrip) {
+		final String tripHeadSignLC = gTrip.getTripHeadsignOrDefault().toLowerCase(Locale.ENGLISH);
+		if (tripHeadSignLC.contains("not in service")) {
 			return true; // exclude
 		}
-		if (this.serviceIds != null) {
-			return excludeUselessTrip(gTrip, this.serviceIds);
+		if (this.serviceIdInts != null) {
+			return excludeUselessTripInt(gTrip, this.serviceIdInts);
 		}
 		return super.excludeTrip(gTrip);
 	}
 
+	@NotNull
 	@Override
 	public Integer getAgencyRouteType() {
 		return MAgency.ROUTE_TYPE_BUS;
@@ -104,9 +109,10 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final long RID_ENDS_WITH_W = 23_000L;
 
 	@Override
-	public long getRouteId(GRoute gRoute) {
+	public long getRouteId(@NotNull GRoute gRoute) {
 		String routeShortName = gRoute.getRouteShortName();
 		if (StringUtils.isEmpty(routeShortName)) {
+			//noinspection deprecation
 			routeShortName = gRoute.getRouteId();
 		}
 		if (Utils.isDigitsOnly(routeShortName)) {
@@ -163,8 +169,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String ROUTE_801 = "Montreal St. P&R - Queen's/Kingston Gen. Hospital";
 	private static final String ROUTE_802 = "Queen's/Kingston Gen. Hospital - Montreal St. P&R";
 
+	@NotNull
 	@Override
-	public String getRouteLongName(GRoute gRoute) {
+	public String getRouteLongName(@NotNull GRoute gRoute) {
 		if (StringUtils.isEmpty(gRoute.getRouteLongName())) {
 			if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
 				return ROUTE_12A;
@@ -175,6 +182,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			if ("COV".equals(gRoute.getRouteShortName())) {
 				return "Cataraqui Ctr"; // not official
 			}
+			//noinspection deprecation
 			Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
 			if (matcher.find()) {
 				int digits = Integer.parseInt(matcher.group());
@@ -216,12 +224,13 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public boolean mergeRouteLongName(MRoute mRoute, MRoute mRouteToMerge) {
+	public boolean mergeRouteLongName(@NotNull MRoute mRoute, @NotNull MRoute mRouteToMerge) {
 		throw new MTLog.Fatal("Unexpected routes to merge: %s & %s!", mRoute, mRouteToMerge);
 	}
 
 	private static final String AGENCY_COLOR = "009BC9";
 
+	@NotNull
 	@Override
 	public String getAgencyColor() {
 		return AGENCY_COLOR;
@@ -231,20 +240,22 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String CATARAQUI_CTR_TRANSFER_PT = "Cataraqui Ctr Transfer Pt";
 
 	private static final HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
+
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
+		//noinspection deprecation
 		map2.put(14L, new RouteTripSpec(14L, // Waterloo Dr / Crossfield Ave
 				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, KINGSTON_GOSPEL_TEMPLE, //
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, CATARAQUI_CTR_TRANSFER_PT) //
 				.addTripSort(MDirectionType.EAST.intValue(), //
 						Arrays.asList( //
-						"S02084", // Cataraqui Centre Transfer Point Bay 7
+								"S02084", // Cataraqui Centre Transfer Point Bay 7
 								"00850", // Centennial Drive
 								"S00399" // Kingston Gospel Temple
 						)) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
 						Arrays.asList( //
-						"S00399", // Kingston Gospel Temple
+								"S00399", // Kingston Gospel Temple
 								"00410", // Centennial Drive
 								"00097", // == Norwest Road
 								"S02079", // Cataraqui Centre Transfer Point Bay 3
@@ -255,88 +266,92 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public int compareEarly(long routeId, List<MTripStop> list1, List<MTripStop> list2, MTripStop ts1, MTripStop ts2, GStop ts1GStop, GStop ts2GStop) {
+	public int compareEarly(long routeId, @NotNull List<MTripStop> list1, @NotNull List<MTripStop> list2, @NotNull MTripStop ts1, @NotNull MTripStop ts2, @NotNull GStop ts1GStop, @NotNull GStop ts2GStop) {
 		if (ALL_ROUTE_TRIPS2.containsKey(routeId)) {
 			return ALL_ROUTE_TRIPS2.get(routeId).compare(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop, this);
 		}
 		return super.compareEarly(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
 	}
 
+	@NotNull
 	@Override
-	public ArrayList<MTrip> splitTrip(MRoute mRoute, GTrip gTrip, GSpec gtfs) {
+	public ArrayList<MTrip> splitTrip(@NotNull MRoute mRoute, @Nullable GTrip gTrip, @NotNull GSpec gtfs) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return ALL_ROUTE_TRIPS2.get(mRoute.getId()).getAllTrips();
 		}
 		return super.splitTrip(mRoute, gTrip, gtfs);
 	}
 
+	@NotNull
 	@Override
-	public Pair<Long[], Integer[]> splitTripStop(MRoute mRoute, GTrip gTrip, GTripStop gTripStop, ArrayList<MTrip> splitTrips, GSpec routeGTFS) {
+	public Pair<Long[], Integer[]> splitTripStop(@NotNull MRoute mRoute, @NotNull GTrip gTrip, @NotNull GTripStop gTripStop, @NotNull ArrayList<MTrip> splitTrips, @NotNull GSpec routeGTFS) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.getId()), this);
 		}
 		return super.splitTripStop(mRoute, gTrip, gTripStop, splitTrips, routeGTFS);
 	}
 
+	@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 	@Override
-	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
+	public void setTripHeadsign(@NotNull MRoute mRoute, @NotNull MTrip mTrip, @NotNull GTrip gTrip, @NotNull GSpec gtfs) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
 		}
 		if (gTrip.getDirectionId() == null) {
+			final String tripHeadsign = gTrip.getTripHeadsignOrDefault();
 			if (mRoute.getId() == 1L) {
 				if (Arrays.asList( //
 						"Saint Lawrence College" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( //
 						"Montreal Street" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 1L + RID_ENDS_WITH_A) { // 1A
 				if (Arrays.asList( //
 						"Downtown" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( //
 						"Montreal Street" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 2L) {
 				if (Arrays.asList( //
 						"Kingston Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( //
 						"Division Street" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 3L) {
 				if (Arrays.asList( // Downtown
 						"Downtown" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Kingston Ctr
 						"Kingston Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
@@ -344,14 +359,14 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				if (Arrays.asList( //
 						"Downtown", //
 						"Downtown via KGH" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( //
 						"Kingston Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
@@ -359,28 +374,28 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				if (Arrays.asList( // Downtown
 						"Kingston Centre", //
 						"Downtown via Princess St" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Cataraqui Ctr
 						"Cataraqui Centre via Princess St" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 6L) {
 				if (Arrays.asList( // St Lawrence College
 						"Saint Lawrence College" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Cataraqui Ctr
 						"Cataraqui Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
@@ -388,71 +403,71 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				if (Arrays.asList( // Rideau Hts
 						"Bus Terminal via John Counter Blvd", //
 						"Rideau Heights via John Counter Blvd" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Invista Ctr
 						"Invista Centre via John Counter Blvd" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 8L) {
 				if (Arrays.asList( // Downtown
 						"Extra Bus - Downtown via Queen's" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // SLC
 						"Queen's University", //
 						"Extra Bus - SLC via Queen's" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 10L) {
 				if (Arrays.asList( // Cataraqui Ctr
 						"Cataraqui Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Amherstview
 						"Amherstview" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 11L) {
 				if (Arrays.asList( // Kingston Ctr
 						"Kingston Centre via Bath Road" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Cataraqui Ctr
 						"Cataraqui Centre via Bath Road" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 12L) {
 				if (Arrays.asList( // Kingston Ctr
 						"Kingston Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Hwy 15
 						"CFB Kingston via Downtown" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
@@ -460,21 +475,21 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				if (Arrays.asList( // Cataraqui Woods / Ctr
 						"Cataraqui Centre", //
 						"Cataraqui Centre/Cataraqui Woods" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Reddendale
 						"Reddendale" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 				// NEW
 				if (Arrays.asList( // Kingston Ctr
 						"Kingston Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
@@ -482,43 +497,43 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				if (Arrays.asList( // Train Sta
 						"Bus Terminal", //
 						"Train Station via Kingston Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Division / Dalton
 						"Division/Dalton via Kingston Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 501L) {
 				if (Arrays.asList( // Downtown
 						"Express - Downtown via Princess St" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Cataraqui Ctr
 						"Express - Cataraqui Ctr via Front/Bayrdg", //
 						"Express - Cataraqui Centre via Front/Bayridge" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
 			if (mRoute.getId() == 502L) {
 				if (Arrays.asList( // Downtown
 						"Express - Downtown via Bayridge/Front" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Cataraqui Ctr
 						"Express - Cataraqui Centre via Princess" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
@@ -526,22 +541,22 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				if (Arrays.asList( // Queen's / KGH
 						"Express - Montreal Street Park & Ride", //
 						"Express - Queen's/KGH via Downtown" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 			}
 			if (mRoute.getId() == 602L) {
 				if (Arrays.asList( // Downtown
 						"Downtown" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 				if (Arrays.asList( // Innovation Dr
 						"Express - Innovation Drive" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 1);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 1);
 					return;
 				}
 			}
@@ -550,8 +565,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 						"Express - Cataraqui Centre via Brock/Bath", //
 						"Express - Cataraqui Ctr via Brock/Bath", //
 						"Express - Cataraqui Centre via Downtown" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 			}
@@ -559,8 +574,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				if (Arrays.asList( // King's Crossing
 						"Express - King's Crossing via Division", //
 						"Express - King's Crossing via Downtown" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 			}
@@ -568,52 +583,52 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 				if (Arrays.asList( // Queen's / KGH
 						"Express - Queen's/KGH via Downtown", //
 						"Express - Innovation Drive" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 			}
 			if (mRoute.getId() == 802L) {
 				if (Arrays.asList( // Montreal St P&R
 						"Express - Montreal Street Park & Ride" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 			}
 			if (mRoute.getId() == 99_001L) { // COV
 				if (Arrays.asList( // Cataraqui Ctr
 						"Cataraqui Centre" //
-				).contains(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), 0);
+				).contains(tripHeadsign)) {
+					mTrip.setHeadsignString(cleanTripHeadsign(tripHeadsign), 0);
 					return;
 				}
 			}
 			throw new MTLog.Fatal("%s: Unexpected trip %s!", mRoute.getId(), gTrip.toStringPlus());
 		}
 		mTrip.setHeadsignString(
-			cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
-			gTrip.getDirectionIdOrDefault()
+				cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
+				gTrip.getDirectionIdOrDefault()
 		);
 	}
 
 	private static final Pattern STARTS_WITH_EXPRESS = Pattern.compile("(^(express -) )*", Pattern.CASE_INSENSITIVE);
 	private static final Pattern STARTS_WITH_EXTRA_BUS = Pattern.compile("(^(extra bus -) )*", Pattern.CASE_INSENSITIVE);
 
+	@NotNull
 	@Override
-	public String cleanTripHeadsign(String tripHeadsign) {
+	public String cleanTripHeadsign(@NotNull String tripHeadsign) {
 		tripHeadsign = STARTS_WITH_EXPRESS.matcher(tripHeadsign).replaceAll(StringUtils.EMPTY);
 		tripHeadsign = STARTS_WITH_EXTRA_BUS.matcher(tripHeadsign).replaceAll(StringUtils.EMPTY);
 		tripHeadsign = CleanUtils.keepToAndRemoveVia(tripHeadsign);
 		tripHeadsign = CleanUtils.SAINT.matcher(tripHeadsign).replaceAll(CleanUtils.SAINT_REPLACEMENT);
-		tripHeadsign = CleanUtils.removePoints(tripHeadsign);
 		tripHeadsign = CleanUtils.cleanSlashes(tripHeadsign);
 		tripHeadsign = CleanUtils.cleanStreetTypes(tripHeadsign);
 		return CleanUtils.cleanLabel(tripHeadsign);
 	}
 
 	@Override
-	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
+	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
 		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
 		if (mTrip.getRouteId() == 4L) {
 			if (Arrays.asList( //
@@ -709,19 +724,15 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern SIDE = Pattern.compile("((^|\\W)(side)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String SIDE_REPLACEMENT = "$2" + "$4";
 
-	private static final Pattern PLATFORM_ = CleanUtils.cleanWords("platform");
-	private static final String PLATFORM_REPLACEMENT = " P ";
-
+	@NotNull
 	@Override
-	public String cleanStopName(String gStopName) {
+	public String cleanStopName(@NotNull String gStopName) {
 		gStopName = SIDE.matcher(gStopName).replaceAll(SIDE_REPLACEMENT);
-		gStopName = PLATFORM_.matcher(gStopName).replaceAll(PLATFORM_REPLACEMENT);
 		gStopName = CleanUtils.cleanBounds(gStopName);
 		gStopName = CleanUtils.CLEAN_AT.matcher(gStopName).replaceAll(CleanUtils.CLEAN_AT_REPLACEMENT);
 		gStopName = CleanUtils.CLEAN_AND.matcher(gStopName).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		gStopName = CleanUtils.cleanStreetTypes(gStopName);
 		gStopName = CleanUtils.cleanNumbers(gStopName);
-		gStopName = CleanUtils.removePoints(gStopName);
 		return CleanUtils.cleanLabel(gStopName);
 	}
 
@@ -733,31 +744,35 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final String PLACE_MSPR = "place_mspr";
 	private static final String PLACE_RAIL = "place_rail";
 
+	@NotNull
 	@Override
-	public String getStopCode(GStop gStop) {
+	public String getStopCode(@NotNull GStop gStop) {
+		//noinspection deprecation
 		return gStop.getStopId(); // using stop ID as stop code (useful to match with GTFS real-time)
 	}
 
 	@Override
-	public int getStopId(GStop gStop) {
-		String stopId = gStop.getStopId();
+	public int getStopId(@NotNull GStop gStop) {
+		//noinspection deprecation
+		final String stopId = gStop.getStopId();
 		if (stopId.length() > 0 && Utils.isDigitsOnly(stopId)) {
 			return Integer.parseInt(stopId); // using stop code as stop ID
 		}
-		if (PLACE_CATC.equals(stopId)) {
-			return 900000;
-		} else if (PLACE_CHCA.equals(stopId)) {
-			return 910000;
-		} else if (PLACE_DWNP.equals(stopId)) {
-			return 920000;
-		} else if (PLACE_GRDC.equals(stopId)) {
-			return 930000;
-		} else if (PLACE_KNGC.equals(stopId)) {
-			return 940000;
-		} else if (PLACE_MSPR.equals(stopId)) {
-			return 950000;
-		} else if (PLACE_RAIL.equals(stopId)) {
-			return 960000;
+		switch (stopId) {
+		case PLACE_CATC:
+			return 900_000;
+		case PLACE_CHCA:
+			return 910_000;
+		case PLACE_DWNP:
+			return 920_000;
+		case PLACE_GRDC:
+			return 930_000;
+		case PLACE_KNGC:
+			return 940_000;
+		case PLACE_MSPR:
+			return 950_000;
+		case PLACE_RAIL:
+			return 960_000;
 		}
 		if ("Smspr1".equals(stopId)) {
 			return 970000;
@@ -767,7 +782,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			if (matcher.find()) {
 				int digits = Integer.parseInt(matcher.group());
 				if (stopId.startsWith("S")) {
-					return 190000 + digits;
+					return 190_000 + digits;
 				}
 				throw new MTLog.Fatal("Unexpected stop ID for '%s'!", gStop);
 			}
