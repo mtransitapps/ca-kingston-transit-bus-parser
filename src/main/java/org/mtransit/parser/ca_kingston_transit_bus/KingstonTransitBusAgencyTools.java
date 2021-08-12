@@ -1,76 +1,41 @@
 package org.mtransit.parser.ca_kingston_transit_bus;
 
+import static org.mtransit.commons.StringUtils.EMPTY;
+
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mtransit.commons.CharUtils;
 import org.mtransit.commons.CleanUtils;
 import org.mtransit.commons.StringUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
-import org.mtransit.parser.Utils;
-import org.mtransit.parser.gtfs.data.GCalendar;
-import org.mtransit.parser.gtfs.data.GCalendarDate;
 import org.mtransit.parser.gtfs.data.GRoute;
-import org.mtransit.parser.gtfs.data.GSpec;
 import org.mtransit.parser.gtfs.data.GStop;
 import org.mtransit.parser.gtfs.data.GTrip;
 import org.mtransit.parser.mt.data.MAgency;
-import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
 
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.mtransit.commons.StringUtils.EMPTY;
 
 // https://openkingston.cityofkingston.ca/explore/dataset/transit-gtfs-routes/
 // https://opendatakingston.cityofkingston.ca/explore/dataset/transit-gtfs-stops/
 // https://api.cityofkingston.ca/gtfs/gtfs.zip
 public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
-	public static void main(@Nullable String[] args) {
-		if (args == null || args.length == 0) {
-			args = new String[3];
-			args[0] = "input/gtfs.zip";
-			args[1] = "../../mtransitapps/ca-kingston-transit-bus-android/res/raw/";
-			args[2] = ""; // files-prefix
-		}
+	public static void main(@NotNull String[] args) {
 		new KingstonTransitBusAgencyTools().start(args);
 	}
 
-	@Nullable
-	private HashSet<Integer> serviceIdInts;
-
 	@Override
-	public void start(@NotNull String[] args) {
-		MTLog.log("Generating Kingston Transit bus data...");
-		long start = System.currentTimeMillis();
-		this.serviceIdInts = extractUsefulServiceIdInts(args, this, true);
-		super.start(args);
-		MTLog.log("Generating Kingston Transit bus data... DONE in %s.", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+	public boolean defaultExcludeEnabled() {
+		return true;
 	}
 
+	@NotNull
 	@Override
-	public boolean excludingAll() {
-		return this.serviceIdInts != null && this.serviceIdInts.isEmpty();
-	}
-
-	@Override
-	public boolean excludeCalendar(@NotNull GCalendar gCalendar) {
-		if (this.serviceIdInts != null) {
-			return excludeUselessCalendarInt(gCalendar, this.serviceIdInts);
-		}
-		return super.excludeCalendar(gCalendar);
-	}
-
-	@Override
-	public boolean excludeCalendarDate(@NotNull GCalendarDate gCalendarDates) {
-		if (this.serviceIdInts != null) {
-			return excludeUselessCalendarDateInt(gCalendarDates, this.serviceIdInts);
-		}
-		return super.excludeCalendarDate(gCalendarDates);
+	public String getAgencyName() {
+		return "Kingston Transit";
 	}
 
 	@Override
@@ -78,9 +43,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		final String tripHeadSignLC = gTrip.getTripHeadsignOrDefault().toLowerCase(Locale.ENGLISH);
 		if (tripHeadSignLC.contains("not in service")) {
 			return true; // exclude
-		}
-		if (this.serviceIdInts != null) {
-			return excludeUselessTripInt(gTrip, this.serviceIdInts);
 		}
 		return super.excludeTrip(gTrip);
 	}
@@ -111,9 +73,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		if (CharUtils.isDigitsOnly(routeShortName)) {
 			return Long.parseLong(routeShortName);
 		}
-		Matcher matcher = DIGITS.matcher(routeShortName);
+		final Matcher matcher = DIGITS.matcher(routeShortName);
 		if (matcher.find()) {
-			int digits = Integer.parseInt(matcher.group());
+			final int digits = Integer.parseInt(matcher.group());
 			String rsn = routeShortName.toLowerCase(Locale.ENGLISH);
 			if (rsn.endsWith("a")) {
 				return digits + RID_ENDS_WITH_A;
@@ -216,11 +178,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return super.getRouteLongName(gRoute);
 	}
 
-	@Override
-	public boolean mergeRouteLongName(@NotNull MRoute mRoute, @NotNull MRoute mRouteToMerge) {
-		throw new MTLog.Fatal("Unexpected routes to merge: %s & %s!", mRoute, mRouteToMerge);
-	}
-
 	private static final String AGENCY_COLOR = "009BC9";
 
 	@NotNull
@@ -230,16 +187,16 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public void setTripHeadsign(@NotNull MRoute mRoute, @NotNull MTrip mTrip, @NotNull GTrip gTrip, @NotNull GSpec gtfs) {
-		mTrip.setHeadsignString(
-				cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
-				gTrip.getDirectionIdOrDefault()
-		);
+	public boolean directionSplitterEnabled() {
+		return true;
 	}
 
 	@Override
-	public boolean directionSplitterEnabled() {
-		return true;
+	public boolean directionSplitterEnabled(long routeId) {
+		if (routeId == 99_001L) {
+			return false;
+		}
+		return super.directionSplitterEnabled(routeId);
 	}
 
 	@Override
