@@ -1,19 +1,20 @@
 package org.mtransit.parser.ca_kingston_transit_bus;
 
+import static org.mtransit.commons.RegexUtils.DIGITS;
 import static org.mtransit.commons.StringUtils.EMPTY;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mtransit.commons.CharUtils;
 import org.mtransit.commons.CleanUtils;
-import org.mtransit.commons.StringUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
 import org.mtransit.parser.gtfs.data.GRoute;
 import org.mtransit.parser.gtfs.data.GStop;
 import org.mtransit.parser.gtfs.data.GTrip;
 import org.mtransit.parser.mt.data.MAgency;
-import org.mtransit.parser.mt.data.MTrip;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,6 +26,12 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@NotNull String[] args) {
 		new KingstonTransitBusAgencyTools().start(args);
+	}
+
+	@Nullable
+	@Override
+	public List<Locale> getSupportedLanguages() {
+		return LANG_EN;
 	}
 
 	@Override
@@ -39,10 +46,19 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
+	public boolean excludeRoute(@NotNull GRoute gRoute) {
+		final String routeLongNameLC = gRoute.getRouteLongNameOrDefault().toLowerCase(Locale.ENGLISH);
+		if (routeLongNameLC.contains("out of service")) {
+			return EXCLUDE;
+		}
+		return super.excludeRoute(gRoute);
+	}
+
+	@Override
 	public boolean excludeTrip(@NotNull GTrip gTrip) {
 		final String tripHeadSignLC = gTrip.getTripHeadsignOrDefault().toLowerCase(Locale.ENGLISH);
 		if (tripHeadSignLC.contains("not in service")) {
-			return true; // exclude
+			return EXCLUDE;
 		}
 		return super.excludeTrip(gTrip);
 	}
@@ -53,129 +69,36 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return MAgency.ROUTE_TYPE_BUS;
 	}
 
-	private static final Pattern DIGITS = Pattern.compile("[\\d]+");
-
-	private static final String ROUTE_12A_RSN = "12A";
-
-	private static final long RID_ENDS_WITH_A = 1_000L;
-	private static final long RID_ENDS_WITH_D = 4_000L;
-	private static final long RID_ENDS_WITH_P = 16_000L;
-	private static final long RID_ENDS_WITH_Q = 17_000L;
-	private static final long RID_ENDS_WITH_W = 23_000L;
-
 	@Override
-	public long getRouteId(@NotNull GRoute gRoute) {
-		String routeShortName = gRoute.getRouteShortName();
-		if (StringUtils.isEmpty(routeShortName)) {
-			//noinspection deprecation
-			routeShortName = gRoute.getRouteId();
-		}
-		if (CharUtils.isDigitsOnly(routeShortName)) {
-			return Long.parseLong(routeShortName);
-		}
-		final Matcher matcher = DIGITS.matcher(routeShortName);
-		if (matcher.find()) {
-			final int digits = Integer.parseInt(matcher.group());
-			String rsn = routeShortName.toLowerCase(Locale.ENGLISH);
-			if (rsn.endsWith("a")) {
-				return digits + RID_ENDS_WITH_A;
-			} else if (rsn.endsWith("d")) {
-				return digits + RID_ENDS_WITH_D;
-			} else if (rsn.endsWith("p")) {
-				return digits + RID_ENDS_WITH_P;
-			} else if (rsn.endsWith("q")) {
-				return digits + RID_ENDS_WITH_Q;
-			} else if (rsn.endsWith("w")) {
-				return digits + RID_ENDS_WITH_W;
-			}
-		}
-		if ("COV".equals(routeShortName)) {
-			return 99_001L;
-		}
-		throw new MTLog.Fatal("Unexpected route ID for '%s'!", gRoute);
+	public boolean defaultRouteIdEnabled() {
+		return true;
 	}
 
-	private static final String ROUTE_1 = "St Lawrence College - Montreal St";
-	private static final String ROUTE_2 = "Kingston Ctr - Division St";
-	private static final String ROUTE_3 = "Kingston Ctr - Downtown Transfer Point";
-	private static final String ROUTE_4 = "Downtown Transfer Point - Cataraqui Ctr";
-	private static final String ROUTE_6 = "St Lawrence College - Cataraqui Ctr";
-	private static final String ROUTE_7 = "INVISTA Ctr - Division St / Dalton Ave";
-	private static final String ROUTE_8 = "Downtown - SLC (Extra Bus)"; // not official
-	private static final String ROUTE_9 = "Brock St / Barrie St - Cataraqui Ctr";
-	private static final String ROUTE_10 = "Cataraqui Ctr - Amherstview";
-	private static final String ROUTE_11 = "Kingston Ctr - Cataraqui Ctr";
-	private static final String ROUTE_12 = "Highway 15 - Kingston Ctr";
-	private static final String ROUTE_12A = "CFB Kingston - Downtown Transfer Point";
-	private static final String ROUTE_13 = "Downtown - SLC (Extra Bus)"; // not official
-	private static final String ROUTE_14 = "Crossfield Ave / Waterloo Dr";
-	private static final String ROUTE_15 = "Reddendale - Cataraqui Woods / Cataraqui Ctr";
-	private static final String ROUTE_16 = "Bus Terminal - Train Station";
-	private static final String ROUTE_17 = "Queen's Shuttle / Main Campus - Queen's Shuttle / West Campus";
-	private static final String ROUTE_18 = "Train Station Circuit";
-	private static final String ROUTE_19 = "Queen's / Kingston General Hospital - Montreal St P&R";
-	private static final String ROUTE_20 = "Queen's Shuttle – Isabel / Tett Ctrs";
-	private static final String ROUTE_501 = "Express (Kingston Ctr - Downtown - Kingston Gen. Hospital - St Lawrence College - Cataraqui Ctr)";
-	private static final String ROUTE_502 = "Express (St Lawrence College - Kingston Gen. Hospital - Downtown - Kingston Ctr - Cataraqui Ctr)";
-	private static final String ROUTE_601 = "Innovation Dr P&R – Queen's / KGH";
-	private static final String ROUTE_602 = "Queen's / KGH – Innovation Dr P&R";
-	private static final String ROUTE_701 = "King's Crossing Ctr – Cataraqui Ctr";
-	private static final String ROUTE_702 = "Cataraqui Ctr - King's Crossing Ctr";
-	private static final String ROUTE_801 = "Montreal St. P&R - Queen's/Kingston Gen. Hospital";
-	private static final String ROUTE_802 = "Queen's/Kingston Gen. Hospital - Montreal St. P&R";
-
-	@NotNull
 	@Override
-	public String getRouteLongName(@NotNull GRoute gRoute) {
-		if (StringUtils.isEmpty(gRoute.getRouteLongName())) {
-			if (ROUTE_12A_RSN.equals(gRoute.getRouteShortName())) {
-				return ROUTE_12A;
-			}
-			if ("18Q".equals(gRoute.getRouteShortName())) {
-				return "Queen's Sunday Shuttle";
-			}
-			if ("COV".equals(gRoute.getRouteShortName())) {
-				return "Cataraqui Ctr"; // not official
-			}
-			//noinspection deprecation
-			Matcher matcher = DIGITS.matcher(gRoute.getRouteId());
-			if (matcher.find()) {
-				int digits = Integer.parseInt(matcher.group());
-				switch (digits) {
-				// @formatter:off
-				case 1: return ROUTE_1;
-				case 2: return ROUTE_2;
-				case 3: return ROUTE_3;
-				case 4: return ROUTE_4;
-				case 6: return ROUTE_6;
-				case 7: return ROUTE_7;
-				case 8: return ROUTE_8;
-				case 9: return ROUTE_9;
-				case 10: return ROUTE_10;
-				case 11: return ROUTE_11;
-				case 12: return ROUTE_12;
-				case 13: return ROUTE_13;
-				case 14: return ROUTE_14;
-				case 15: return ROUTE_15;
-				case 16: return ROUTE_16;
-				case 17: return ROUTE_17;
-				case 18: return ROUTE_18;
-				case 19: return ROUTE_19;
-				case 20: return ROUTE_20;
-				case 501: return ROUTE_501;
-				case 502: return ROUTE_502;
-				case 601: return ROUTE_601;
-				case 602: return ROUTE_602;
-				case 701: return ROUTE_701;
-				case 702: return ROUTE_702;
-				case 801: return ROUTE_801;
-				case 802: return ROUTE_802;
-				// @formatter:on
-				}
-			}
-			throw new MTLog.Fatal("Unexpected route long name '%s'!", gRoute);
+	public boolean useRouteShortNameForRouteId() {
+		return true;
+	}
+
+	@Nullable
+	@Override
+	public Long convertRouteIdFromShortNameNotSupported(@NotNull String routeShortName) {
+		switch (routeShortName) {
+		case "COV":
+			return 99_001L;
+		case "XTRA":
+			return 99_002L;
 		}
-		return super.getRouteLongName(gRoute);
+		return super.convertRouteIdFromShortNameNotSupported(routeShortName);
+	}
+
+	@Override
+	public boolean defaultRouteLongNameEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean defaultAgencyColorEnabled() {
+		return true;
 	}
 
 	private static final String AGENCY_COLOR = "009BC9";
@@ -238,11 +161,6 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return CleanUtils.cleanLabel(tripHeadsign);
 	}
 
-	@Override
-	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
-		throw new MTLog.Fatal("Unexpected trips to merge: %s & %s!", mTrip, mTripToMerge);
-	}
-
 	private static final Pattern SIDE_ = CleanUtils.cleanWord("side");
 
 	@NotNull
@@ -299,9 +217,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 			return 970000;
 		}
 		try {
-			Matcher matcher = DIGITS.matcher(stopId);
+			final Matcher matcher = DIGITS.matcher(stopId);
 			if (matcher.find()) {
-				int digits = Integer.parseInt(matcher.group());
+				final int digits = Integer.parseInt(matcher.group());
 				if (stopId.startsWith("S")) {
 					return 190_000 + digits;
 				}
