@@ -116,7 +116,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean directionSplitterEnabled(long routeId) {
-		if (routeId == 99_001L) {
+		if (routeId == 99_002L) { // XTRA
 			return false;
 		}
 		return super.directionSplitterEnabled(routeId);
