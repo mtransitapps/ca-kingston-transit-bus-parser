@@ -116,6 +116,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean directionSplitterEnabled(long routeId) {
+		if (routeId == 502L) {
+			return false; // some trips w/ only 1 different stop cannot merge (!)
+		}
 		if (routeId == 99_002L) { // XTRA
 			return false;
 		}
