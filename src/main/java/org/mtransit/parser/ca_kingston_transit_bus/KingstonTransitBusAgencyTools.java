@@ -13,6 +13,7 @@ import org.mtransit.parser.gtfs.data.GRoute;
 import org.mtransit.parser.gtfs.data.GStop;
 import org.mtransit.parser.gtfs.data.GTrip;
 import org.mtransit.parser.mt.data.MAgency;
+import org.mtransit.parser.mt.data.MRouteSNToIDConverter;
 
 import java.util.List;
 import java.util.Locale;
@@ -112,6 +113,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public boolean directionSplitterEnabled(long routeId) {
 		if (routeId == 99_002L) { // XTRA
+			return false;
+		} else if (routeId == MRouteSNToIDConverter.convert("17W")) {
 			return false;
 		}
 		return true;
