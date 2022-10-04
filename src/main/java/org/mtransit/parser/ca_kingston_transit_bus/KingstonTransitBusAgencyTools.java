@@ -114,7 +114,11 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	public boolean directionSplitterEnabled(long routeId) {
 		if (routeId == 99_002L) { // XTRA
 			return false;
+		} else if (routeId == 601L) {
+			return false; // same head-sign, same last stops...
 		} else if (routeId == MRouteSNToIDConverter.convert("17W")) {
+			return false;
+		} else if (routeId == MRouteSNToIDConverter.convert("17P")) {
 			return false;
 		}
 		return true;
