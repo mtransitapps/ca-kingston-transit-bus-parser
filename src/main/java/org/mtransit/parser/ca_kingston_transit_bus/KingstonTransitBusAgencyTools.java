@@ -21,8 +21,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // https://openkingston.cityofkingston.ca/explore/dataset/transit-gtfs-routes/
-// https://opendatakingston.cityofkingston.ca/explore/dataset/transit-gtfs-stops/
-// https://api.cityofkingston.ca/gtfs/gtfs.zip
+// https://openkingston.cityofkingston.ca/explore/dataset/transit-gtfs-stops/
+// RT: https://openkingston.cityofkingston.ca/explore/dataset/transit-gtfs-realtime/
 public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@NotNull String[] args) {
@@ -93,6 +93,12 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
+	public @NotNull String getRouteShortName(@NotNull GRoute gRoute) {
+		//noinspection deprecation
+		return gRoute.getRouteId(); // used for GTFS-RT
+	}
+
+	@Override
 	public boolean defaultRouteLongNameEnabled() {
 		return true;
 	}
@@ -110,6 +116,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		return AGENCY_COLOR;
 	}
 
+	@SuppressWarnings("RedundantIfStatement")
 	@Override
 	public boolean directionSplitterEnabled(long routeId) {
 		if (routeId == 99_002L) { // XTRA
@@ -135,8 +142,8 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@NotNull
 	@Override
-	public String cleanDirectionHeadsign(boolean fromStopName, @NotNull String directionHeadSign) {
-		directionHeadSign = super.cleanDirectionHeadsign(fromStopName, directionHeadSign);
+	public String cleanDirectionHeadsign(int directionId, boolean fromStopName, @NotNull String directionHeadSign) {
+		directionHeadSign = super.cleanDirectionHeadsign(directionId, fromStopName, directionHeadSign);
 		if (fromStopName) {
 			directionHeadSign = ENDS_WITH_PARENTHESIS_.matcher(directionHeadSign).replaceAll(EMPTY);
 			directionHeadSign = TRANSFER_POINT_.matcher(directionHeadSign).replaceAll(EMPTY);
@@ -189,7 +196,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public String getStopCode(@NotNull GStop gStop) {
 		//noinspection deprecation
-		return gStop.getStopId(); // using stop ID as stop code (useful to match with GTFS real-time)
+		return gStop.getStopId(); // used by GTFS-RT
 	}
 
 	@Override
