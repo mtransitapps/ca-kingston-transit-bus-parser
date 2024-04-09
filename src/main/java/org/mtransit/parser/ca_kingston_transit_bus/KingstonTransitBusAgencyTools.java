@@ -119,14 +119,32 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	@SuppressWarnings("RedundantIfStatement")
 	@Override
 	public boolean directionSplitterEnabled(long routeId) {
+		if (routeId == 1L) {
+			return false; // 2024-04-09: it's a mess
+		}
+		if (routeId == 7L) {
+			return false; // 2024-04-09: it's a mess
+		}
+		if (routeId == 501L) {
+			return false; // 2024-04-09: it's a mess
+		}
+		if (routeId == 502L) {
+			return false; // 2024-04-09: it's a mess
+		}
+		if (routeId == 701L) {
+			return false; // 2024-04-09: it's a mess
+		}
+		if (routeId == 702L) {
+			return false; // 2024-04-09: it's a mess
+		}
 		if (routeId == 99_002L) { // XTRA
-			return false;
-		} else if (routeId == 601L) {
-			return false; // same head-sign, same last stops...
-		} else if (routeId == MRouteSNToIDConverter.convert("17W")) {
-			return false;
-		} else if (routeId == MRouteSNToIDConverter.convert("17P")) {
-			return false;
+			return false; // 2024-04-09: it's a mess
+		}
+		if (routeId == MRouteSNToIDConverter.convert("17W")) {
+			return false; // 2024-04-09: it's a mess
+		}
+		if (routeId == MRouteSNToIDConverter.convert("17P")) {
+			return false; // 2024-04-09: it's a mess
 		}
 		return true;
 	}
@@ -203,7 +221,7 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 	public int getStopId(@NotNull GStop gStop) {
 		//noinspection deprecation
 		final String stopId = gStop.getStopId();
-		if (stopId.length() > 0 && CharUtils.isDigitsOnly(stopId)) {
+		if (!stopId.isEmpty() && CharUtils.isDigitsOnly(stopId)) {
 			return Integer.parseInt(stopId); // using stop code as stop ID
 		}
 		switch (stopId) {
