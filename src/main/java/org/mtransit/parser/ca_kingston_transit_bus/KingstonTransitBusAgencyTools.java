@@ -131,6 +131,9 @@ public class KingstonTransitBusAgencyTools extends DefaultAgencyTools {
 		if (routeId == 502L) {
 			return false; // 2024-04-09: it's a mess
 		}
+		if (routeId == 601L) {
+			return false; // 2024-04-30: it's a mess
+		}
 		if (routeId == 701L) {
 			return false; // 2024-04-09: it's a mess
 		}
